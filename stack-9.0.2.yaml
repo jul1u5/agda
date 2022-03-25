@@ -2,6 +2,11 @@ resolver: lts-19.0
 compiler: ghc-9.0.2
 compiler-check: match-exact
 
+extra-deps:
+# Andreas, 2022-02-07
+# On Windows, we install the latest ICU (v69), which is only supported from text-icu >= 0.8
+- text-icu-0.8.0
+
 # Local packages, usually specified by relative directory name
 packages:
 - '.'

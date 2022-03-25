@@ -126,6 +126,13 @@ extra-deps:
 - process-1.6.13.2
 - unix-2.7.2.2
 
+# ASR (2022-03-25): required when running `/.github/workflows/make req-stack`.
+- conduit-1.3.4.2
+- libyaml-0.1.2
+- resourcet-1.2.4.3
+- mono-traversable-1.0.15.3
+- unliftio-core-0.2.0.1
+- vector-algorithms-0.8.0.4
 
 flags:
   transformers-compat:
