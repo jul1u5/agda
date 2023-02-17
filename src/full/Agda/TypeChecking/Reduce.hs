@@ -446,7 +446,13 @@ instance Reduce Sort where
           else return $ notBlocked (mkType 0)
         IntervalUniv -> done
         MetaS x es -> done
-        DefS d es  -> done -- postulated sorts do not reduce
+        DefS d es  -> do
+          bt <- reduceB' $ Def d es
+          return $ bt <&> \case
+            Sort s'      -> s'
+            MetaV x' es' -> MetaS x' es'
+            Def d es'    -> DefS d es'
+            _            -> __IMPOSSIBLE__
         DummyS{}   -> done
 
 instance Reduce Elim where

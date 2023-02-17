@@ -149,20 +149,35 @@ warnForPlentyInHardCompileTimeMode = \case
       Qω{}         -> warn
       QωPlenty{}   -> warn
 
--- | Add a constant to the signature. Lifts the definition to top level.
+-- | Allows to override hard compile-time mode for specific constants.
+--
+-- Can be passed to @addConstant''@.
+data HardModeOverride
+  = IgnoreHardMode
+  | RespectHardMode
+  deriving (Eq, Show)
+
+-- TODO: Rename addConstant'' to addConstant.
 addConstant :: QName -> Definition -> TCM ()
-addConstant q d = do
+addConstant = addConstant'' RespectHardMode
+
+-- | Add a constant to the signature. Lifts the definition to top level.
+addConstant'' :: HardModeOverride -> QName -> Definition -> TCM ()
+addConstant'' hardModeOverride q d = do
   reportSDoc "tc.signature" 20 $ "adding constant " <+> pretty q <+> " to signature"
 
   -- Every constant that gets added to the signature in hard
   -- compile-time mode is treated as erased.
   hard <- viewTC eHardCompileTimeMode
-  d    <- if not hard then return d else do
-    case erasedFromQuantity (getQuantity d) of
-      Nothing     -> __IMPOSSIBLE__
-      Just erased -> do
-        warnForPlentyInHardCompileTimeMode erased
-        return $ mapQuantity (zeroQuantity `composeQuantity`) d
+  d    <-
+    if not hard || hardModeOverride == IgnoreHardMode
+    then return d
+    else do
+      case erasedFromQuantity (getQuantity d) of
+        Nothing     -> __IMPOSSIBLE__
+        Just erased -> do
+          warnForPlentyInHardCompileTimeMode erased
+          return $ mapQuantity (zeroQuantity `composeQuantity`) d
 
   tel <- getContextTelescope
   let tel' = replaceEmptyName "r" $ killRange $ case theDef d of

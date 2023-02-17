@@ -28,7 +28,7 @@ import Agda.Syntax.Common
 import Agda.Syntax.Internal
 import Agda.Syntax.Internal.Generic
 import Agda.Syntax.Internal.MetaVars
-import Agda.Syntax.Position (getRange)
+import Agda.Syntax.Position (getRange, noRange)
 
 import Agda.TypeChecking.Monad
 -- import Agda.TypeChecking.Monad.Builtin
@@ -52,6 +52,8 @@ import {-# SOURCE #-} Agda.TypeChecking.Conversion
 -- import Agda.TypeChecking.CheckInternal
 -- import {-# SOURCE #-} Agda.TypeChecking.CheckInternal (checkInternal)
 import Agda.TypeChecking.MetaVars.Occurs
+import Agda.TypeChecking.CompiledClause (CompiledClauses'(Done))
+import Agda.TypeChecking.Coverage.SplitTree (SplitTree'(SplittingDone))
 
 import qualified Agda.Utils.BiMap as BiMap
 import Agda.Utils.Function
@@ -149,11 +151,74 @@ assignTermTCM' x tel v = do
      -- verify (new) invariants
     whenM (not <$> asksTC envAssignMetas) __IMPOSSIBLE__
 
+    -- Create a new function definition containing the instantiation of
+    -- the metavariable.
+    -- TODO: Change name generation.
+    metaFunName <- qualify_ <$> freshName_ ("meta" ++ show (metaId x))
+    mv <- lookupLocalMeta x
+
+    fun <- emptyFunctionData
+    let defn = FunctionDefn fun
+          { _funClauses = [clause]
+          , _funCompiled = Just $ Done [] clauseRHS
+          , _funSplitTree = Just $ SplittingDone $ length tel
+          , _funCovering = []
+          }
+        clause = Clause
+          { clauseLHSRange    = noRange
+          , clauseFullRange   = noRange
+          , clauseTel         = EmptyTel
+          , namedClausePats   = []
+          , clauseBody        = Just $ clauseRHS
+          , clauseType        = Just $ Arg defaultArgInfo typ
+          , clauseCatchall    = False
+          , clauseUnreachable = Just False
+          , clauseRecursive   = Just False
+          , clauseEllipsis    = NoEllipsis
+          , clauseExact       = Nothing
+          , clauseWhereModule = Nothing
+          }
+        clauseRHS = foldr mkLam v tel
+        typ = jMetaType $ mvJudgement mv
+
+    reportSDoc "tc.meta.assign" 70 $ do
+      vcat [ "adding function" <+> prettyTCM metaFunName <+> "for metavariable" <+> prettyTCM x
+           , nest 2 $ text $ prettyShow defn
+           ]
+
+    let defnArgInfo = setModality (getModality mv) defaultArgInfo
+
+    lang <- getLanguage
+    addConstant'' IgnoreHardMode metaFunName .
+      defaultDefn defnArgInfo metaFunName typ lang $ defn
+
+    reportSDoc "tc.meta.assign" 70 $ do
+      sep [ "added " <+> prettyTCM metaFunName <+> ":"
+          , nest 2 $ prettyTCM . defType =<< getConstInfo metaFunName
+          ]
+
     whenProfile Profile.Metas $ liftTCM $ return () {-tickMax "max-open-metas" . (fromIntegral . size) =<< getOpenMetas-}
+
+    let instTel = []
+        instBody = Def metaFunName []
+
+        -- Alternative approach: abstract over the variables in tel and
+        -- immediately apply the arguments.
+        -- instTel = tel
+        -- instBody = Def metaFunName $
+        --   zipWith (\arg i -> Apply $ (const $ Var i []) <$> arg)
+        --     tel
+        --     (downFrom $ length tel)
+
+    reportSDoc "tc.meta.assign" 70 $ do
+      vcat [ text "instantiating metavariable" <+> prettyTCM x <+> ":"
+           , nest 2 $ text $ prettyShow $ instBody
+           ]
+
     updateMetaVarTCM x $ \ mv ->
       mv { mvInstantiation = InstV $ Instantiation
-             { instTel = tel
-             , instBody = v
+             { instTel
+             , instBody
              -- Andreas, 2022-04-28, issue #5875:
              -- Can't killRange the meta-solution, since this will destroy
              -- ranges of termination errors (and potentially other passes
