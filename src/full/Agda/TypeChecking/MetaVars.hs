@@ -153,84 +153,95 @@ assignTermTCM' x tel v = do
      -- verify (new) invariants
     whenM (not <$> asksTC envAssignMetas) __IMPOSSIBLE__
 
-    -- Create a new function definition containing the instantiation of
-    -- the metavariable.
-    -- TODO: Change name generation.
-    metaFunName <- qualify_ <$> freshName_ ("meta" ++ show (metaId x))
     mv <- lookupLocalMeta x
 
-    fun <- emptyFunctionData
-    let defn = FunctionDefn fun
-          { _funClauses = [clause]
-          , _funCompiled = Just $ Done [] clauseRHS
-          , _funSplitTree = Just $ SplittingDone $ length tel
-          , _funCovering = []
-          }
-        clause = Clause
-          { clauseLHSRange    = noRange
-          , clauseFullRange   = noRange
-          , clauseTel         = EmptyTel
-          , namedClausePats   = []
-          , clauseBody        = Just $ clauseRHS
-          , clauseType        = Just $ Arg defaultArgInfo typ
-          , clauseCatchall    = False
-          , clauseUnreachable = Just False
-          , clauseRecursive   = Just False
-          , clauseEllipsis    = NoEllipsis
-          , clauseExact       = Nothing
-          , clauseWhereModule = Nothing
-          }
-        clauseRHS = foldr mkLam v tel
-        typ = jMetaType $ mvJudgement mv
+    let doGeneralize = case unArg $ miGeneralizable $ mvInfo mv of
+          YesGeneralizeMeta -> True
+          YesGeneralizeVar -> True
+          NoGeneralize -> False
+
+    inst <- if doGeneralize then
+      return Instantiation
+        { instTel = tel
+        , instBody = v
+        -- Andreas, 2022-04-28, issue #5875:
+        -- Can't killRange the meta-solution, since this will destroy
+        -- ranges of termination errors (and potentially other passes
+        -- that run on internal syntax)!
+        -- , instBody = killRange v
+        }
+    else do
+      -- Create a new function definition containing the instantiation of
+      -- the metavariable.
+      -- TODO: Change name generation.
+      metaFunName <- qualify_ <$> freshName_ ("meta" ++ show (metaId x))
+      addMetaFun metaFunName mv
+
+      return Instantiation
+        { instTel = []
+        , instBody = Def metaFunName []
+          -- Alternative approach: abstract over the variables in tel and
+          -- immediately apply the arguments.
+          -- instTel = tel
+          -- instBody = Def metaFunName $
+          --   zipWith (\arg i -> Apply $ (const $ Var i []) <$> arg)
+          --     tel
+          --     (downFrom $ length tel)
+        }
 
     reportSDoc "tc.meta.assign" 70 $ do
-      vcat [ "adding function" <+> prettyTCM metaFunName <+> "for metavariable" <+> prettyTCM x
-           , nest 2 $ text $ prettyShow defn
-           ]
-
-    let defnArgInfo = setModality (getModality mv) defaultArgInfo
-
-    lang <- getLanguage
-    addConstant'' IgnoreHardMode metaFunName .
-      defaultDefn defnArgInfo metaFunName typ lang $ defn
-
-    reportSDoc "tc.meta.assign" 70 $ do
-      sep [ "added " <+> prettyTCM metaFunName <+> ":"
-          , nest 2 $ prettyTCM . defType =<< getConstInfo metaFunName
+      vcat [ text "instantiating metavariable" <+> prettyTCM x <+> ":"
+          , nest 2 $ text $ prettyShow $ instBody inst
           ]
 
     whenProfile Profile.Metas $ liftTCM $ return () {-tickMax "max-open-metas" . (fromIntegral . size) =<< getOpenMetas-}
 
-    let instTel = []
-        instBody = Def metaFunName []
-
-        -- Alternative approach: abstract over the variables in tel and
-        -- immediately apply the arguments.
-        -- instTel = tel
-        -- instBody = Def metaFunName $
-        --   zipWith (\arg i -> Apply $ (const $ Var i []) <$> arg)
-        --     tel
-        --     (downFrom $ length tel)
-
-    reportSDoc "tc.meta.assign" 70 $ do
-      vcat [ text "instantiating metavariable" <+> prettyTCM x <+> ":"
-           , nest 2 $ text $ prettyShow $ instBody
-           ]
-
-    updateMetaVarTCM x $ \ mv ->
-      mv { mvInstantiation = InstV $ Instantiation
-             { instTel
-             , instBody
-             -- Andreas, 2022-04-28, issue #5875:
-             -- Can't killRange the meta-solution, since this will destroy
-             -- ranges of termination errors (and potentially other passes
-             -- that run on internal syntax)!
-             -- , instBody = killRange v
-             }
-         }
+    updateMetaVarTCM x $ \ mv -> mv { mvInstantiation = InstV inst }
     etaExpandListeners x
     wakeupConstraints x
     reportSLn "tc.meta.assign" 20 $ "completed assignment of " ++ prettyShow x
+  where
+    addMetaFun name mv = do
+      fun <- emptyFunctionData
+      let defn = FunctionDefn fun
+            { _funClauses = [clause]
+            , _funCompiled = Just $ Done [] clauseRHS
+            , _funSplitTree = Just $ SplittingDone $ length tel
+            , _funCovering = []
+            }
+          clause = Clause
+            { clauseLHSRange    = noRange
+            , clauseFullRange   = noRange
+            , clauseTel         = EmptyTel
+            , namedClausePats   = []
+            , clauseBody        = Just $ clauseRHS
+            , clauseType        = Just $ Arg defaultArgInfo typ -- Is the modality correct here?
+            , clauseCatchall    = False
+            , clauseUnreachable = Just False
+            , clauseRecursive   = Just False
+            , clauseEllipsis    = NoEllipsis
+            , clauseExact       = Nothing
+            , clauseWhereModule = Nothing
+            }
+          clauseRHS = foldr mkLam v tel
+          typ = jMetaType $ mvJudgement mv
+          defnArgInfo = setModality (getModality mv) defaultArgInfo
+
+      reportSDoc "tc.meta.assign" 70 $ do
+        vcat [ "adding function" <+> prettyTCM name <+> "for metavariable" <+> prettyTCM x
+            , nest 2 $ text $ prettyShow defn
+            , "with modality"
+            , nest 2 $ text $ prettyShow $ getModality mv
+            ]
+
+      lang <- getLanguage
+      addConstant'' IgnoreHardMode name .
+        defaultDefn defnArgInfo name typ lang $ defn
+
+      reportSDoc "tc.meta.assign" 70 $ do
+        sep [ "added " <+> prettyTCM name <+> ":"
+            , nest 2 $ prettyTCM . defType =<< getConstInfo name
+            ]
 
 -- * Creating meta variables.
 
