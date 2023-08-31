@@ -72,6 +72,8 @@ import Agda.Utils.VarSet (VarSet)
 import qualified Agda.Utils.VarSet as VarSet
 
 import Agda.Utils.Impossible
+import Agda.Syntax.Concrete.Name (stringNameParts, nameParts)
+import Agda.Utils.CallStack (HasCallStack, callStack, prettyCallStack)
 
 instance MonadMetaSolver TCM where
   newMeta' = newMetaTCM'
@@ -81,7 +83,7 @@ instance MonadMetaSolver TCM where
   updateMetaVar = updateMetaVarTCM
 
   -- Right now we roll back the full state when aborting.
-  -- TODO: only roll back the metavariables
+  -- TODO: only roll back the metavariables and the created functions
   speculateMetas fallback m = do
     (a, s) <- localTCStateSaving m
     case a of
@@ -158,7 +160,20 @@ assignTermTCM' x tel v = do
           YesGeneralizeVar -> True
           NoGeneralize -> False
 
-    inst <- if doGeneralize then
+    let funType = jMetaType $ mvJudgement mv
+    -- telViewUpTo needs to run in the right context, check that this is the case
+    t <- telViewUpTo 1 funType
+    -- reportSDoc "tc.meta.assign" 80 $ "funType: " <+> prettyTCM funType
+    -- TODO: there should be a nicer way to solve this
+    let hasGeneralizedArgs = case theTel t of
+          ExtendTel _ b -> absName b == "genTel"
+          _ -> False
+
+    let simpleTerm = case v of
+          -- Var _ [] -> True
+          _ -> False
+
+    inst <- if doGeneralize || hasGeneralizedArgs || simpleTerm then
       return Instantiation
         { instTel = tel
         , instBody = v
@@ -172,25 +187,21 @@ assignTermTCM' x tel v = do
       -- Create a new function definition containing the instantiation of
       -- the metavariable.
       -- TODO: Change name generation.
-      metaFunName <- qualify_ <$> freshName_ ("meta" ++ show (metaId x))
-      addMetaFun metaFunName mv
+      metaFunName <- qualify_ <$> freshName_ ("metaf" ++ show (metaId x))
+      addMetaFun metaFunName tel mv x v
 
       return Instantiation
-        { instTel = []
-        , instBody = Def metaFunName []
-          -- Alternative approach: abstract over the variables in tel and
-          -- immediately apply the arguments.
-          -- instTel = tel
-          -- instBody = Def metaFunName $
-          --   zipWith (\arg i -> Apply $ (const $ Var i []) <$> arg)
-          --     tel
-          --     (downFrom $ length tel)
+        -- Alternative approach: don't abstract over the variables in tel and just reference the metafunction.
+        -- { instTel = []
+        -- , instBody = Def metaFunName []
+        -- }
+        -- Currently, the above approach breaks the code in other places.
+        { instTel = tel
+        , instBody = Def metaFunName $
+            zipWith (\arg i -> Apply $ (const $ Var i []) <$> arg)
+              tel
+              (downFrom $ length tel)
         }
-
-    reportSDoc "tc.meta.assign" 70 $ do
-      vcat [ text "instantiating metavariable" <+> prettyTCM x <+> ":"
-          , nest 2 $ text $ prettyShow $ instBody inst
-          ]
 
     whenProfile Profile.Metas $ liftTCM $ return () {-tickMax "max-open-metas" . (fromIntegral . size) =<< getOpenMetas-}
 
@@ -198,48 +209,69 @@ assignTermTCM' x tel v = do
     etaExpandListeners x
     wakeupConstraints x
     reportSLn "tc.meta.assign" 20 $ "completed assignment of " ++ prettyShow x
-  where
-    addMetaFun name mv = do
-      fun <- emptyFunctionData
-      let defn = FunctionDefn fun
-            { _funClauses = [clause]
-            , _funCompiled = Just $ Done [] clauseRHS
-            , _funSplitTree = Just $ SplittingDone $ length tel
-            , _funCovering = []
-            }
-          clause = Clause
-            { clauseLHSRange    = noRange
-            , clauseFullRange   = noRange
-            , clauseTel         = EmptyTel
-            , namedClausePats   = []
-            , clauseBody        = Just $ clauseRHS
-            , clauseType        = Just $ Arg defaultArgInfo typ -- Is the modality correct here?
-            , clauseCatchall    = False
-            , clauseUnreachable = Just False
-            , clauseRecursive   = Just False
-            , clauseEllipsis    = NoEllipsis
-            , clauseExact       = Nothing
-            , clauseWhereModule = Nothing
-            }
-          clauseRHS = foldr mkLam v tel
-          typ = jMetaType $ mvJudgement mv
-          defnArgInfo = setModality (getModality mv) defaultArgInfo
 
-      reportSDoc "tc.meta.assign" 70 $ do
-        vcat [ "adding function" <+> prettyTCM name <+> "for metavariable" <+> prettyTCM x
-            , nest 2 $ text $ prettyShow defn
-            , "with modality"
-            , nest 2 $ text $ prettyShow $ getModality mv
-            ]
+addMetaFun :: QName -> [Arg PatVarName] -> MetaVariable -> MetaId -> Term -> TCMT IO ()
+addMetaFun name tel mv x v = do
+  fun <- emptyFunctionData
+  let arity = length tel
+      funType = jMetaType $ mvJudgement mv
+      TelV
+        { theTel = clauseTel
+        , theCore = clauseType
+        } = telView'UpTo arity $ funType
+      defn = FunctionDefn fun
+        { _funClauses = [clause]
+        , _funCompiled = Just $ Done tel clauseRHS
+        , _funSplitTree = Just $ SplittingDone $ arity
+        -- check coverage checker
+        -- , _funTerminates = Just True
+        , _funCovering = [] -- or the same as funClauses
+        , _funFlags = Set.singleton FunMeta
+        }
+      -- TODO: checkInjectivity
+      -- But first, check if tc.inj.check:40 checks our function
+      clause = Clause
+        { clauseLHSRange    = noRange
+        , clauseFullRange   = noRange
+        , clauseTel         = clauseTel
+        , namedClausePats   =
+            zipWith
+              (\arg i -> (namedDBVarP i) <$> arg)
+              tel
+              (downFrom arity)
+        , clauseBody        = Just $ clauseRHS
+        , clauseType        = Just $ Arg defaultArgInfo clauseType
+        , clauseCatchall    = False
+        , clauseRecursive   = Nothing
+        , clauseEllipsis    = NoEllipsis
+        -- check if coverage checker is run
+        , clauseUnreachable = Just False
+        , clauseExact       = Just True
+        --
+        , clauseWhereModule = Nothing
+        }
+      clauseRHS = v
+      defnArgInfo = defaultArgInfo
 
-      lang <- getLanguage
-      addConstant'' IgnoreHardMode name .
-        defaultDefn defnArgInfo name typ lang $ defn
+  reportSDoc "tc.meta.assign" 80 $ do
+    vcat [ "adding meta function" <+> prettyTCM name <+> "for metavariable" <+> prettyTCM x
+        , nest 2 $ prettyTCM clause
+        , "with type"
+        , nest 2 $ prettyTCM funType
+        , "with modality"
+        , nest 2 $ text $ prettyShow $ getModality defnArgInfo
+        ]
 
-      reportSDoc "tc.meta.assign" 70 $ do
-        sep [ "added " <+> prettyTCM name <+> ":"
-            , nest 2 $ prettyTCM . defType =<< getConstInfo name
-            ]
+  lang <- getLanguage
+
+  -- Instantiation is made by creating a new function (metafunction) with the solution as the body
+  -- (and the body of the metavariable is set to be the reference to the function).
+  -- This allows the solution to be reused by other meta variables.
+  -- To only capture the required variables in the telescope, this is run in the top-level context.
+  -- Otherwise, the definition will get lambda-lifted with superfluous arguments and
+  -- things won't reduce properly.
+  inTopContext $ addConstant'' IgnoreHardMode name .
+    defaultDefn defnArgInfo name funType lang $ defn
 
 -- * Creating meta variables.
 

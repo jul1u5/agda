@@ -254,13 +254,14 @@ quotingKit = do
 
       quoteTerm :: Term -> ReduceM Term
       quoteTerm v = do
-        v <- instantiate' v
+        v <- instantiate' v >>= inlineMetas
         case unSpine v of
           Var n es   ->
              let ts = fromMaybe __IMPOSSIBLE__ $ allApplyElims es
              in  var !@! Lit (LitNat $ fromIntegral n) @@ quoteArgs ts
           Lam info t -> lam !@ quoteHiding (getHiding info) @@ quoteAbs quoteTerm t
           Def x es   -> do
+            -- TODO: inline metafun
             defn <- getConstInfo x
             r <- isReconstructed
             -- #2220: remember to restore dropped parameters

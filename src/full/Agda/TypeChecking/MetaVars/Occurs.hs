@@ -59,6 +59,7 @@ import Agda.Syntax.Common.Pretty (prettyShow)
 import Agda.Utils.Size
 
 import Agda.Utils.Impossible
+import Agda.Utils.Singleton (singleton)
 
 ---------------------------------------------------------------------------
 -- * MetaOccursCheck: going into definitions to exclude cyclic solutions
@@ -504,9 +505,10 @@ instance Occurs Term where
           Dummy{}     -> return v
           DontCare v  -> dontCare <$> do
             onlyReduceTypes $ underRelevance Irrelevant $ occurs v
-          Def d es    -> do
-            definitionCheck d
-            Def d <$> occDef d es
+          Def d es    ->
+            inliningMetaOnError d es $ do
+              definitionCheck d
+              Def d <$> occDef d es
           Con c ci vs -> do
             definitionCheck (conName c)
             Con c ci <$> conArgs vs (occurs vs)  -- if strongly rigid, remain so, except with unreduced IApply arguments.
@@ -563,6 +565,24 @@ instance Occurs Term where
       Sort s     -> metaOccurs m s              -- vv m is already an unblocker
       MetaV m' vs | m == m'   -> patternViolation' neverUnblock 50 $ "Found occurrence of " ++ prettyShow m
                   | otherwise -> addOrUnblocker (unblockOnMeta m') $ metaOccurs m vs
+
+inliningMetaOnError :: QName -> [Elim' Term] -> OccursM Term -> OccursM Term
+inliningMetaOnError d es mt = do
+  defn <- theDef <$> getConstInfo d
+  if defn ^. funMeta
+    then mt `catchError` onError
+    else mt
+  where
+    onError = \err -> do
+      let retryOccurs = do
+            u <- inlineMetaFun d es
+            occurs u
+      case err of
+        PatternErr _ -> retryOccurs
+        -- TODO: should we catch type error?
+        TypeError{} -> retryOccurs
+        Exception{} -> throwError err
+        IOException{} -> throwError err
 
 instance Occurs QName where
   occurs d = __IMPOSSIBLE__
@@ -943,8 +963,19 @@ killArgs kills m = do
   if mvFrozen mv == Frozen || not allowAssign then return PrunedNothing else do
       -- Andreas 2011-04-26, we allow pruning in MetaV and MetaS
       let a = jMetaType $ mvJudgement mv
-      TelV tel b <- telView' <$> instantiateFull a
+      -- TODO: benchmark this
+      -- Alternative approach:
+      -- rety with inlining if didn't get prunedeverything,
+      -- and use previous result if not any better.
+      TelV tel b <- telView' <$> do inlineMetas =<< instantiateFull a
       let args         = zip (telToList tel) (kills ++ repeat False)
+      reportSDoc "tc.meta.kill" 10 $ vcat
+        [ "analyzing kills on"
+        , nest 2 $ vcat
+          [ prettyTCM m <+> ":" <+> prettyTCM a
+          , "tel:" <+> prettyTCM (tel, b)
+          ]
+        ]
       (kills', a') <- killedType args b
       dbg kills' a a'
       -- If there is any prunable argument, perform the pruning

@@ -225,7 +225,16 @@ instance UsableModality Term where
         "Definition" <+> prettyTCM (Def f []) <+>
         text ("has modality " ++ show fmod ++ ", which is a " ++
               (if ok then "" else "NOT ") ++ "more usable modality than " ++ show mod)
-      return ok `and2M` usableMod mod vs
+
+      (return ok `and2M` usableMod mod vs) `or2M` usableModWithInlined f vs
+      where
+        usableModWithInlined f vs =  do
+          -- Should we save the inlined definition like we do in the occurs checker?
+          -- Currently we just discard, after the check.
+          defn <- theDef <$> getConstInfo f
+          return (defn ^. funMeta) `and2M` do
+            u <- inlineMetaFun f vs
+            usableMod mod $ u
     Con c o vs -> do
       cmod <- modalityOfConst (conName c)
       let ok = cmod `moreUsableModality` mod

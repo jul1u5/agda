@@ -134,6 +134,7 @@ compactDef bEnv def rewr = do
         [ shouldReduce
         , or
           [ RecursiveReductions `SmallSet.member` allowed
+          , defMetaFunction def && MetaFunctionReductions `SmallSet.member` allowed
           , isConOrProj && ProjectionReductions `SmallSet.member` allowed
           , isInlineFun (theDef def) && InlineReductions `SmallSet.member` allowed
           , definitelyNonRecursive_ (theDef def) && or
@@ -142,7 +143,9 @@ compactDef bEnv def rewr = do
             ]
           ]
         , not (defNonterminating def) || SmallSet.member NonTerminatingReductions allowed
-        , not (defTerminationUnconfirmed def) || SmallSet.member UnconfirmedReductions allowed
+        , not (defTerminationUnconfirmed def)
+            || SmallSet.member UnconfirmedReductions allowed
+            || SmallSet.member MetaFunctionReductions allowed
         , not isPrp
         , not (isIrrelevant def)
         ]
@@ -458,7 +461,6 @@ fastReduce' norm v = do
 
       bEnv = BuiltinEnv { bZero = zero, bSuc = suc, bTrue = true, bFalse = false, bRefl = refl,
                           bPrimForce = force, bPrimErase = erase }
-  allowedReductions <- asksTC envAllowedReductions
   rwr <- optRewriting <$> pragmaOptions
   constInfo <- unKleisli $ \f -> do
     info <- getConstInfo f

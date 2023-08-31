@@ -80,7 +80,11 @@ data TerEnv = TerEnv
   -- First part: options, configuration.
 
   { terUseDotPatterns :: Bool
-    -- ^ Are we mining dot patterns to find evindence of structal descent?
+    -- ^ Are we mining dot patterns to find evidence of structural descent?
+  , terInlineMetaFunctions :: Bool
+    -- ^ Are we inlining meta-variable functions
+    --   Initially set to False, but if the termination checking fails
+    --   it is restarted with the option set to True.
   , terSizeSuc :: Maybe QName
     -- ^ The name of size successor, if any.
   , terSharp   :: Maybe QName
@@ -146,6 +150,7 @@ data TerEnv = TerEnv
 defaultTerEnv :: TerEnv
 defaultTerEnv = TerEnv
   { terUseDotPatterns           = False -- must be False initially!
+  , terInlineMetaFunctions      = False
   , terSizeSuc                  = Nothing
   , terSharp                    = Nothing
   , terCutOff                   = defaultCutOff
@@ -259,6 +264,12 @@ terGetUseDotPatterns = terAsks terUseDotPatterns
 
 terSetUseDotPatterns :: Bool -> TerM a -> TerM a
 terSetUseDotPatterns b = terLocal $ \ e -> e { terUseDotPatterns = b }
+
+terGetInlineMetaFunctions :: TerM Bool
+terGetInlineMetaFunctions = terAsks terInlineMetaFunctions
+
+terSetInlineMetaFunctions :: Bool -> TerM a -> TerM a
+terSetInlineMetaFunctions b = terLocal $ \ e -> e { terInlineMetaFunctions = b }
 
 terGetSizeSuc :: TerM (Maybe QName)
 terGetSizeSuc = terAsks terSizeSuc

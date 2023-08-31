@@ -29,4 +29,3 @@ subset p [] = stop
 subset p (x :: xs) with p x
 ...                | true  = keep (subset p xs)
 ...                | false = drop (subset p xs)
-

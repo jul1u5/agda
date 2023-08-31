@@ -53,7 +53,7 @@ import Agda.TypeChecking.Monad
 import Agda.TypeChecking.Pretty
 import Agda.TypeChecking.Forcing
 import Agda.TypeChecking.Records -- (isRecordConstructor, isInductiveRecord)
-import Agda.TypeChecking.Reduce (reduce, normalise, instantiate, instantiateFull, appDefE')
+import Agda.TypeChecking.Reduce (reduce, normalise, instantiate, instantiateFull, appDefE', reduceDefS, inlineMetas)
 import Agda.TypeChecking.SizedTypes
 import Agda.TypeChecking.Substitute
 import Agda.TypeChecking.Telescope
@@ -255,12 +255,16 @@ termMutual' = do
        -- could be turned into actual splits, because no-confusion
        -- would make the other cases impossible, so I do not disable
        -- this for --without-K entirely.
+       -- TODO: inline metas for cubical as well (without dot patterns)
        ifM (isJust . optCubical <$> pragmaOptions) (return r) {- else -} $
        case r of
          r@Right{} -> return r
          Left{}    -> do
-           -- Try again, but include the dot patterns this time.
-           calls2 <- terSetUseDotPatterns True $ collect
+
+           reportSDoc "term.check.term" 50 $ do
+              "restarting termination checker"
+           -- Try again, but include the dot patterns and inline metafunctions this time.
+           calls2 <- terSetUseDotPatterns True $ terSetInlineMetaFunctions True $ collect
            reportCalls "" calls2
            billToTerGraph $ Term.terminates calls2
 
@@ -397,6 +401,7 @@ termFunction name = inConcreteOrAbstractMode name $ \ def -> do
     calls1 <- terSetUseDotPatterns False $ collect
     reportCalls "no " calls1
 
+    -- TODO: refactor
     r <- do
      cutoff <- terGetCutOff
      let ?cutoff = cutoff
@@ -418,7 +423,7 @@ termFunction name = inConcreteOrAbstractMode name $ \ def -> do
        Right () -> return $ Right ()
        Left{}   -> do
          -- Try again, but include the dot patterns this time.
-         calls2 <- terSetUseDotPatterns True $ collect
+         calls2 <- terSetInlineMetaFunctions True $ terSetUseDotPatterns True $ collect
          reportCalls "" calls2
          billToTerGraph $ Term.terminatesFilter (== index) calls2
 
@@ -636,6 +641,7 @@ instance TermToPattern a b => TermToPattern (Named c a) (Named c b) where
 instance TermToPattern Term DeBruijnPattern where
   termToPattern t = liftTCM (constructorForm t) >>= \case
     -- Constructors.
+    -- TODO: investigate if this works when metas are inlined but not dot patterns
     Con c _ args -> ifDotPatsOrRecord c $
       ConP c noConPatternInfo . map (fmap unnamed) <$> termToPattern (fromMaybe __IMPOSSIBLE__ $ allApplyElims args)
     Def s [Apply arg] -> ifDotPats $ do
@@ -759,18 +765,18 @@ instance ExtractCalls Sort where
       reportSDoc "term.sort" 50 $
         text ("s = " ++ show s)
     case s of
-      Inf _ _    -> return empty
-      SizeUniv   -> return empty
-      LockUniv   -> return empty
-      LevelUniv  -> return empty
-      IntervalUniv -> return empty
+      Inf _ _        -> return empty
+      SizeUniv       -> return empty
+      LockUniv       -> return empty
+      LevelUniv      -> return empty
+      IntervalUniv   -> return empty
       Univ _ t       -> terUnguarded $ extract t  -- no guarded levels
       PiSort a s1 s2 -> extract (a, s1, s2)
-      FunSort s1 s2 -> extract (s1, s2)
-      UnivSort s -> extract s
-      MetaS x es -> return empty
-      DefS d es  -> return empty
-      DummyS{}   -> return empty
+      FunSort s1 s2  -> extract (s1, s2)
+      UnivSort s     -> extract s
+      MetaS x es     -> return empty
+      DefS d es      -> extract =<< ignoreBlocking <$> reduceDefS d es
+      DummyS{}       -> return empty
 
 -- | Extract recursive calls from a type.
 
@@ -1010,8 +1016,15 @@ instance ExtractCalls Term where
     reportSDoc "term.check.term" 50 $ do
       "looking for calls in" <+> prettyTCM t
 
+    shouldInlineMetas <- terGetInlineMetaFunctions
+    when (shouldInlineMetas) $ do
+      reportSDoc "term.check.term" 50 $ do
+        "inlining metas"
+
     -- Instantiate top-level MetaVar.
-    instantiate t >>= \case
+    instantiate t
+      >>= (if shouldInlineMetas then inlineMetas else return)
+      >>= \case
 
       -- Constructed value.
       Con ConHead{conName = c, conDataRecord = dataOrRec} _ es -> do
