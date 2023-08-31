@@ -18,11 +18,14 @@ module Agda.TypeChecking.Reduce
  , unfoldInlined
  , appDef', appDefE'
  , abortIfBlocked, ifBlocked, isBlocked, fromBlocked, blockOnError
+ , inlineMetaFun
+ , reduceDefS
  -- Simplification
  , Simplify, simplify, simplifyBlocked'
  -- Normalization
  , Normalise, normalise', normalise
  , slowNormaliseArgs
+ , inlineMetas
  ) where
 
 import Control.Monad ( (>=>), void )
@@ -66,7 +69,7 @@ import Agda.Utils.Lens
 import Agda.Utils.List
 import qualified Agda.Utils.Maybe.Strict as Strict
 import Agda.Utils.Monad
-import Agda.Syntax.Common.Pretty (prettyShow)
+import Agda.Syntax.Common.Pretty (prettyShow, Pretty)
 import Agda.Utils.Size
 import Agda.Utils.Tuple
 import qualified Agda.Utils.SmallSet as SmallSet
@@ -242,6 +245,45 @@ instance Instantiate Term where
   instantiate' (Sort s) = Sort <$> instantiate' s
   instantiate' t = return t
 
+-- TODO: can we just use @appDefE''@ here instead of dealing with substitutions?
+inlineMetaFun :: HasConstInfo m => QName -> [Elim' Term] -> m Term
+inlineMetaFun f es = do
+  defn <- theDef <$> getConstInfo f
+  unless (defn ^. funMeta) $ __IMPOSSIBLE__
+
+  let arity = length instTel
+      Clause
+        { clauseTel = instTel
+        , clauseBody = Just instBody
+        , clauseType = Just instType
+        } = case funClauses defn of
+          [c] -> c
+          _ -> __IMPOSSIBLE__
+
+  -- reportSDoc "tc.irr" 50 $ text "before" <+> prettyTCM u
+  -- u <- locallyTC eReduceDefs (const $ OnlyReduceDefs $ singleton f) $ reduce u
+
+  -- es1 - possibly under applied arguments
+  -- es2 - over applied arguments
+  let (es1, es2) = splitAt arity es
+      vs1 = reverse $ map unArg $ fromMaybe __IMPOSSIBLE__ $ allApplyElims es1
+      rho = vs1 ++# wkS (length vs1) idS
+            -- really should be .. ++# emptyS but using wkS makes it reduce to idS
+            -- when applicable
+      -- specification:
+      -- u == foldr mkLam (instBody i) (instTel i) `applyE` es
+      u =
+        applySubst rho
+          -- (foldr mkLam instBody $ drop (length es1) (instTel i))
+          (foldr mkLam instBody $ drop arity $ zipWith (\i -> fmap (<> "." <> show i)) [0..] $ telToArgs instTel)
+          -- instBody
+          `applyE` es2
+
+  reportSDoc "tc.reduce" 50 $ do
+    text "inlined metafun:" <+> prettyTCM f <+> text "to:" <+> prettyTCM u
+
+  return u
+
 instance Instantiate t => Instantiate (Type' t) where
   instantiate' (El s t) = El <$> instantiate' s <*> instantiate' t
 
@@ -268,11 +310,13 @@ instance Instantiate Blocker where
 
 instance Instantiate Sort where
   instantiate' = \case
-    MetaS x es -> instantiate' (MetaV x es) >>= \case
-      Sort s'      -> return s'
-      MetaV x' es' -> return $ MetaS x' es'
-      Def d es'    -> return $ DefS d es'
-      _            -> __IMPOSSIBLE__
+    MetaS x es -> do
+      m <- instantiate' (MetaV x es) >>= reduceB'
+      case ignoreBlocking m of
+        Sort s'      -> return s'
+        MetaV x' es' -> return $ MetaS x' es'
+        Def d es'    -> ignoreBlocking <$> reduceDefS d es'
+        _            -> __IMPOSSIBLE__
     s -> return s
 
 instance (Instantiate t, Instantiate e) => Instantiate (Dom' t e) where
@@ -424,7 +468,8 @@ instance Reduce Sort where
             -- `piSort'` does checking of free variables, and if we
             -- don't instantiate we might end up blocking on a solved
             -- metavariable.
-            s2' <- instantiateFull s2'
+            -- TODO: do we also need to inline metas?
+            s2' <- instantiateFull s2' >>= inlineMetas
             case piSort' a s1' s2' of
               Left b -> return $ Blocked b $ PiSort a s1' s2'
               Right s -> reduceB' s
@@ -450,14 +495,17 @@ instance Reduce Sort where
           else return $ notBlocked (mkType 0)
         IntervalUniv -> done
         MetaS x es -> done
-        DefS d es  -> do
-          bt <- reduceB' $ Def d es
-          return $ bt <&> \case
-            Sort s'      -> s'
-            MetaV x' es' -> MetaS x' es'
-            Def d es'    -> DefS d es'
-            _            -> __IMPOSSIBLE__
+        DefS d es  -> reduceDefS d es
         DummyS{}   -> done
+
+reduceDefS :: MonadReduce m => QName -> Elims -> m (Blocked' Term Sort)
+reduceDefS d es = do
+  bt <- reduceB $ Def d es
+  return $ bt <&> \case
+    Sort s'      -> s'
+    MetaV x' es' -> MetaS x' es'
+    Def d es'    -> DefS d es'
+    _            -> __IMPOSSIBLE__
 
 instance Reduce Elim where
   reduce' (Apply v) = Apply <$> reduce' v
@@ -688,6 +736,7 @@ unfoldDefinitionStep v0 f es =
               -- Includes projection-like and irrelevant projections.
               -- Note: irrelevant projections lead to @dontUnfold@ and
               -- so are not actually unfolded.
+          , def ^. funMeta && MetaFunctionReductions `SmallSet.member` allowed
           , isInlineFun def && InlineReductions `SmallSet.member` allowed
           , definitelyNonRecursive_ def && or
             [ copatterns && CopatternReductions `SmallSet.member` allowed
@@ -1352,6 +1401,19 @@ instance Normalise EqualityView where
     <*> normalise' t
     <*> normalise' a
     <*> normalise' b
+
+inlineMetas :: (MonadReduce m, MonadDebug m, Normalise a, Pretty a) => a -> m a
+inlineMetas v = do
+  v' <- onlyReduceMetaFunctions $ normalise v
+
+  reportSDoc "tc.reduce" 5 $ vcat
+    [ text "inlining metas in:"
+    , nest 2 $ pretty v
+    , text "to:"
+    , nest 2 $ pretty v'
+    ]
+
+  return v'
 
 ---------------------------------------------------------------------------
 -- * Full instantiation

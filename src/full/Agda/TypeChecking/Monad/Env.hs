@@ -97,6 +97,10 @@ modifyAllowedReductions = localTC . updateAllowedReductions
 putAllowedReductions :: MonadTCEnv m => AllowedReductions -> m a -> m a
 putAllowedReductions = modifyAllowedReductions . const
 
+onlyReduceMetaFunctions :: MonadTCEnv m => m a -> m a
+onlyReduceMetaFunctions = modifyAllowedReductions $ const $
+  SmallSet.fromList [MetaFunctionReductions]
+
 -- | Reduce @Def f vs@ only if @f@ is a projection.
 onlyReduceProjections :: MonadTCEnv m => m a -> m a
 onlyReduceProjections = modifyAllowedReductions $ SmallSet.intersection $

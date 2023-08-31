@@ -63,7 +63,8 @@ eliminateDeadCode bs disp sig ms = Bench.billTo [Bench.DeadCode] $ do
 
       rootNames = Set.union public extraRoots
       rootMetas =
-        if not save then Set.empty else metasIn
+        -- TODO: Figure out why this works
+        if not save then metasIn bs else metasIn
           ( bs
           , sig ^. sigSections
           , sig ^. sigRewriteRules

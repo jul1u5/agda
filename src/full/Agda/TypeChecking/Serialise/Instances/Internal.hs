@@ -444,11 +444,13 @@ instance EmbPrj FunctionFlag where
   icod_ FunStatic       = pure 0
   icod_ FunInline       = pure 1
   icod_ FunMacro        = pure 2
+  icod_ FunMeta         = pure 3
 
   value = \case
     0 -> pure FunStatic
     1 -> pure FunInline
     2 -> pure FunMacro
+    3 -> pure FunMeta
     _ -> malformed
 
 instance EmbPrj a => EmbPrj (WithArity a) where

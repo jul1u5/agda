@@ -2250,6 +2250,7 @@ data FunctionFlag
   = FunStatic  -- ^ Should calls to this function be normalised at compile-time?
   | FunInline  -- ^ Should calls to this function be inlined by the compiler?
   | FunMacro   -- ^ Is this function a macro?
+  | FunMeta    -- ^ Is this an instantiation of a metavariable
   deriving (Eq, Ord, Enum, Show, Generic)
 
 data CompKit = CompKit
@@ -2959,10 +2960,11 @@ funFlag flag f def@Function{ funFlags = flags } =
   \ b -> def{ funFlags = (if b then Set.insert else Set.delete) flag flags }
 funFlag _ f def = f False $> def
 
-funStatic, funInline, funMacro :: Lens' Defn Bool
+funStatic, funInline, funMacro, funMeta :: Lens' Defn Bool
 funStatic       = funFlag FunStatic
 funInline       = funFlag FunInline
 funMacro        = funFlag FunMacro
+funMeta         = funFlag FunMeta
 
 isMacro :: Defn -> Bool
 isMacro = (^. funMacro)
@@ -3023,7 +3025,7 @@ instance Monoid Simplification where
 data Reduced no yes
   = NoReduction no
   | YesReduction Simplification yes
-  deriving Functor
+  deriving (Show, Functor)
 
 redReturn :: a -> ReduceM (Reduced a' a)
 redReturn = return . YesReduction YesSimplification
@@ -3074,6 +3076,7 @@ data AllowedReduction
                              --   by confluence checker)
   | UnconfirmedReductions    -- ^ Functions whose termination has not (yet) been confirmed.
   | NonTerminatingReductions -- ^ Functions that have failed termination checking.
+  | MetaFunctionReductions   -- ^ Reduce shared metavariable functions
   deriving (Show, Eq, Ord, Enum, Bounded, Ix, Generic)
 
 instance SmallSet.SmallSetElement AllowedReduction
@@ -3172,6 +3175,9 @@ defTerminationUnconfirmed :: Definition -> Bool
 defTerminationUnconfirmed Defn{theDef = Function{funTerminates = Just True}} = False
 defTerminationUnconfirmed Defn{theDef = Function{funTerminates = _        }} = True
 defTerminationUnconfirmed _ = False
+
+defMetaFunction :: Definition -> Bool
+defMetaFunction Defn{theDef} = theDef ^. funMeta
 
 defAbstract :: Definition -> IsAbstract
 defAbstract d = case theDef d of
