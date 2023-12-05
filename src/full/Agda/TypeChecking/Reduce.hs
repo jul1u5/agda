@@ -75,6 +75,9 @@ import Agda.Utils.Tuple
 import qualified Agda.Utils.SmallSet as SmallSet
 
 import Agda.Utils.Impossible
+import Agda.TypeChecking.Coverage.SplitTree
+import Agda.Syntax.Internal.Pattern (funArity)
+import Debug.Trace (traceShowId)
 
 instantiate :: (Instantiate a, MonadReduce m) => a -> m a
 instantiate = liftReduce . instantiate'
@@ -275,12 +278,14 @@ inlineMetaFun f es = do
       u =
         applySubst rho
           -- (foldr mkLam instBody $ drop (length es1) (instTel i))
-          (foldr mkLam instBody $ drop arity $ zipWith (\i -> fmap (<> "." <> show i)) [0..] $ telToArgs instTel)
+          (foldr mkLam instBody $ drop (length es1) $ zipWith (\i -> fmap (<> "." <> show i)) [0..] $ telToArgs instTel)
           -- instBody
           `applyE` es2
 
-  reportSDoc "tc.reduce" 50 $ do
-    text "inlined metafun:" <+> prettyTCM f <+> text "to:" <+> prettyTCM u
+  reportSDoc "tc.reduce.meta" 50 $ vcat
+    [ text "inlined metafun:" <+> prettyTCM f <+> prettyTCM es
+    , text "to:" <+> prettyTCM u
+    ]
 
   return u
 
@@ -460,16 +465,23 @@ instance Reduce Sort where
       s <- instantiate' s
       let done | MetaS x _ <- s = return $ blocked x s
                | otherwise      = return $ notBlocked s
+      -- let reported x = do
+      --       reportSDoc "tc.reduce" 50 $ vcat
+      --         [ text "reduceB PiSort:" <+> prettyTCM s <+> text "=>" <+> pretty x
+      --         ]
+      --       return x
       case s of
-        PiSort a s1 s2 -> reduceB' (s1 , s2) >>= \case
+        PiSort a s1 s2 -> reduceB' (s1 , s2)
+          -- >>= reported
+          >>= \case
           Blocked b (s1',s2') -> return $ Blocked b $ PiSort a s1' s2'
           NotBlocked _ (s1',s2') -> do
             -- Jesper, 2022-10-12: do instantiateFull here because
             -- `piSort'` does checking of free variables, and if we
             -- don't instantiate we might end up blocking on a solved
             -- metavariable.
-            -- TODO: do we also need to inline metas?
-            s2' <- instantiateFull s2' >>= inlineMetas
+            -- TODO: check if this inlines properly
+            s2' <- {- inlineMetas =<< -} instantiateFull s2'
             case piSort' a s1' s2' of
               Left b -> return $ Blocked b $ PiSort a s1' s2'
               Right s -> reduceB' s
@@ -624,6 +636,7 @@ slowReduceTerm v = do
                  $ unfoldDefinitionE reduceB' (Con c ci []) (conName c) es
           traverse reduceNat v
       Sort s   -> done
+      -- TODO: maybe need to reduce
       Level l  -> ifM (SmallSet.member LevelReductions <$> asksTC envAllowedReductions)
                     {- then -} (fmap levelTm <$> reduceB' l)
                     {- else -} done
@@ -668,8 +681,6 @@ unfoldCorecursion v = do
     Def f es -> unfoldDefinitionE unfoldCorecursion (Def f []) f es
     _ -> slowReduceTerm v
 
--- | If the first argument is 'True', then a single delayed clause may
--- be unfolded.
 unfoldDefinition ::
   (Term -> ReduceM (Blocked Term)) ->
   Term -> QName -> Args -> ReduceM (Blocked Term)
@@ -709,7 +720,7 @@ unfoldDefinitionStep v0 f es =
       -- (i.e., those that failed the termination check)
       -- and delayed definitions
       -- are not unfolded unless explicitly permitted.
-      dontUnfold = or
+      dontUnfold = {- (not (def ^. funMeta) && MetaFunctionReductions `SmallSet.member` allowed) && -} or
         [ defNonterminating info && SmallSet.notMember NonTerminatingReductions allowed
         , defTerminationUnconfirmed info && SmallSet.notMember UnconfirmedReductions allowed
         , prp == Right True
@@ -736,7 +747,7 @@ unfoldDefinitionStep v0 f es =
               -- Includes projection-like and irrelevant projections.
               -- Note: irrelevant projections lead to @dontUnfold@ and
               -- so are not actually unfolded.
-          , def ^. funMeta && MetaFunctionReductions `SmallSet.member` allowed
+          , def ^. funMeta -- && MetaFunctionReductions `SmallSet.member` allowed
           , isInlineFun def && InlineReductions `SmallSet.member` allowed
           , definitelyNonRecursive_ def && or
             [ copatterns && CopatternReductions `SmallSet.member` allowed
@@ -1404,13 +1415,19 @@ instance Normalise EqualityView where
 
 inlineMetas :: (MonadReduce m, MonadDebug m, Normalise a, Pretty a) => a -> m a
 inlineMetas v = do
+  reportSDoc "tc.meta.inline" 50 $ vcat
+    [ text "{ starting to inline metafuns:"
+    , nest 2 $ pretty v
+    ]
+
   v' <- onlyReduceMetaFunctions $ normalise v
 
-  reportSDoc "tc.reduce" 5 $ vcat
-    [ text "inlining metas in:"
+  reportSDoc "tc.meta.inline" 50 $ vcat
+    [ text "inlined metas in:"
     , nest 2 $ pretty v
     , text "to:"
     , nest 2 $ pretty v'
+    , text "}"
     ]
 
   return v'

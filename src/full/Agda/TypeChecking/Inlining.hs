@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wunused-imports #-}
 
 -- | Logic for deciding which functions should be automatically inlined.
-module Agda.TypeChecking.Inlining (autoInline) where
+module Agda.TypeChecking.Inlining (autoInline, shouldInline) where
 
 import qualified Data.IntMap as IntMap
 

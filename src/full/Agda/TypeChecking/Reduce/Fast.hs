@@ -83,6 +83,7 @@ import Agda.Utils.Zipper
 import qualified Agda.Utils.SmallSet as SmallSet
 
 import Agda.Utils.Impossible
+import qualified Agda.TypeChecking.Pretty as P
 
 import Debug.Trace
 
@@ -130,11 +131,11 @@ compactDef bEnv def rewr = do
         Constructor{} -> True
         Function { funProjection = Right{} } -> True
         _ -> False
-  let allowReduce = and
+  let allowReduce = defMetaFunction def || and
         [ shouldReduce
         , or
           [ RecursiveReductions `SmallSet.member` allowed
-          , defMetaFunction def && MetaFunctionReductions `SmallSet.member` allowed
+          -- , defMetaFunction def && MetaFunctionReductions `SmallSet.member` allowed
           , isConOrProj && ProjectionReductions `SmallSet.member` allowed
           , isInlineFun (theDef def) && InlineReductions `SmallSet.member` allowed
           , definitelyNonRecursive_ (theDef def) && or
@@ -145,10 +146,37 @@ compactDef bEnv def rewr = do
         , not (defNonterminating def) || SmallSet.member NonTerminatingReductions allowed
         , not (defTerminationUnconfirmed def)
             || SmallSet.member UnconfirmedReductions allowed
-            || SmallSet.member MetaFunctionReductions allowed
+            -- \|| SmallSet.member MetaFunctionReductions allowed
         , not isPrp
         , not (isIrrelevant def)
         ]
+
+  -- reportSDoc "fast" 10 $ P.vcat
+  --   [ P.pretty (def ^. funMeta) <+> P.pretty (defMetaFunction def && MetaFunctionReductions `SmallSet.member` allowed)
+  --   ]
+
+  reportSDoc "fast" 10 $ P.vcat
+    [ P.text "computing compact definition for" P.<+> P.prettyTCM (defName def)
+    , P.nest 2 $ P.vcat
+        [ P.pretty shouldReduce
+        , P.nest 2 $ P.vcat
+          [ P.pretty $ RecursiveReductions `SmallSet.member` allowed
+          , P.pretty $ defMetaFunction def && MetaFunctionReductions `SmallSet.member` allowed
+          , P.pretty $ isConOrProj && ProjectionReductions `SmallSet.member` allowed
+          , P.pretty $ isInlineFun (theDef def) && InlineReductions `SmallSet.member` allowed
+          , P.pretty $ definitelyNonRecursive_ (theDef def) && or
+            [ defCopatternLHS def && CopatternReductions `SmallSet.member` allowed
+            , FunctionReductions `SmallSet.member` allowed
+            ]
+          ]
+        , P.pretty $ not (defNonterminating def) || SmallSet.member NonTerminatingReductions allowed
+        , P.pretty $ not (defTerminationUnconfirmed def)
+            || SmallSet.member UnconfirmedReductions allowed
+            || SmallSet.member MetaFunctionReductions allowed
+        , P.pretty $ not isPrp
+        , P.pretty $ not (isIrrelevant def)
+        ]
+    ]
 
   cdefn <-
     case theDef def of

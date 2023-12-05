@@ -149,7 +149,7 @@ instance SynEq Bool where
 -- | Syntactic term equality ignores 'DontCare' stuff.
 instance SynEq Term where
   synEq v v' = if unsafeComparePointers v v' then return (v, v') else do
-    (v, v') <- lift $ instantiate' (v, v')
+    (v, v') <- lift $ {- inlineMetas =<< -} instantiate' (v, v')
     case (v, v') of
       (Var   i vs, Var   i' vs') | i == i' -> Var i   <$$> synEq vs vs'
       (Con c i vs, Con c' i' vs') | c == c' -> Con c (bestConInfo i i') <$$> synEq vs vs'
@@ -181,7 +181,7 @@ instance SynEq PlusLevel where
 
 instance SynEq Sort where
   synEq s s' = if unsafeComparePointers s s' then return (s, s') else do
-    (s, s') <- lift $ instantiate' (s, s')
+    (s, s') <- lift $ {- inlineMetas =<< -} instantiate' (s, s')
     case (s, s') of
       (Univ u l, Univ u' l') | u == u' -> Univ u <$$> synEq l l'
       (PiSort a b c, PiSort a' b' c') -> piSort <$$> synEq a a' <**> synEq' b b' <**> synEq' c c'

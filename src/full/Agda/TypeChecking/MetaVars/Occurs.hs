@@ -60,7 +60,6 @@ import Agda.Syntax.Common.Pretty (prettyShow)
 import Agda.Utils.Size
 
 import Agda.Utils.Impossible
-import Agda.Utils.Singleton (singleton)
 
 ---------------------------------------------------------------------------
 -- * MetaOccursCheck: going into definitions to exclude cyclic solutions

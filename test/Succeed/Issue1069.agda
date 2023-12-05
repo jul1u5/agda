@@ -4,7 +4,7 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 
 -- To see what is going on:
--- {-# OPTIONS -v tc.meta.assign.proj:25 #-}
+{-# OPTIONS -vtc.meta.assign.proj:25 --double-check #-}
 
 record Σ (A : Set) (B : A → Set) : Set where
   constructor t

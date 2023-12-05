@@ -52,8 +52,6 @@ import {-# SOURCE #-} Agda.TypeChecking.Conversion
 -- import Agda.TypeChecking.CheckInternal
 -- import {-# SOURCE #-} Agda.TypeChecking.CheckInternal (checkInternal)
 import Agda.TypeChecking.MetaVars.Occurs
-import Agda.TypeChecking.CompiledClause (CompiledClauses'(Done))
-import Agda.TypeChecking.Coverage.SplitTree (SplitTree'(SplittingDone))
 
 import qualified Agda.Utils.BiMap as BiMap
 import Agda.Utils.Function
@@ -74,8 +72,9 @@ import Agda.Utils.VarSet (VarSet)
 import qualified Agda.Utils.VarSet as VarSet
 
 import Agda.Utils.Impossible
-import Agda.Syntax.Concrete.Name (stringNameParts, nameParts)
-import Agda.Utils.CallStack (HasCallStack, callStack, prettyCallStack)
+import Agda.TypeChecking.CompiledClause (CompiledClauses'(Done))
+import Agda.TypeChecking.Coverage.SplitTree (SplitTree'(SplittingDone))
+-- import {-# SOURCE #-} Agda.TypeChecking.CompiledClause.Compile (compileClauses)
 
 instance MonadMetaSolver TCM where
   newMeta' = newMetaTCM'
@@ -148,11 +147,15 @@ assignTerm x tel v = do
 -- | Skip frozen check.  Used for eta expanding frozen metas.
 assignTermTCM' :: MetaId -> [Arg ArgName] -> Term -> TCM ()
 assignTermTCM' x tel v = do
+    ctx <- getContext
+    reportSDoc "tc.meta" 70 $ vcat
+      [ nest 2 $ "ctx =" <+> prettyTCM ctx
+      ]
     reportSDoc "tc.meta.assign" 70 $ vcat
       [ "assignTerm" <+> prettyTCM x <+> " := " <+> prettyTCM v
       , nest 2 $ "tel =" <+> prettyList_ (map (text . unArg) tel)
       ]
-     -- verify (new) invariants
+    -- verify (new) invariants
     whenM (not <$> asksTC envAssignMetas) __IMPOSSIBLE__
 
     mv <- lookupLocalMeta x
@@ -173,6 +176,8 @@ assignTermTCM' x tel v = do
 
     let simpleTerm = case v of
           -- Var _ [] -> True
+          -- Sort (Univ UType (Max _ [])) -> True
+          -- _ -> True
           _ -> False
 
     inst <- if doGeneralize || hasGeneralizedArgs || simpleTerm then
@@ -189,7 +194,7 @@ assignTermTCM' x tel v = do
       -- Create a new function definition containing the instantiation of
       -- the metavariable.
       -- TODO: Change name generation.
-      metaFunName <- qualify_ <$> freshName_ ("metaf" ++ show (metaId x))
+      metaFunName <- qualify_ <$> freshName_ ("metaf" ++ show (metaId x) ++ "@" ++ show (moduleNameHash (metaModule x)))
       addMetaFun metaFunName tel mv x v
 
       return Instantiation
@@ -215,24 +220,19 @@ assignTermTCM' x tel v = do
 addMetaFun :: QName -> [Arg PatVarName] -> MetaVariable -> MetaId -> Term -> TCMT IO ()
 addMetaFun name tel mv x v = do
   fun <- emptyFunctionData
+
+  -- TODO: should we inline metas here?
+  -- funType <- pure $ {- inlineMetas $ -} jMetaType $ mvJudgement mv
+  let funType = jMetaType $ mvJudgement mv
   let arity = length tel
-      funType = jMetaType $ mvJudgement mv
-      TelV
+  funTypeTelV <- telViewUpTo arity $ jMetaType $ mvJudgement mv
+
+  let TelV
         { theTel = clauseTel
         , theCore = clauseType
-        } = telView'UpTo arity $ funType
-      defn = FunctionDefn fun
-        { _funClauses = [clause]
-        , _funCompiled = Just $ Done tel clauseRHS
-        , _funSplitTree = Just $ SplittingDone $ arity
-        -- check coverage checker
-        -- , _funTerminates = Just True
-        , _funCovering = [] -- or the same as funClauses
-        , _funFlags = Set.singleton FunMeta
-        }
-      -- TODO: checkInjectivity
-      -- But first, check if tc.inj.check:40 checks our function
-      clause = Clause
+        } = funTypeTelV
+  when (arity /= length clauseTel) __IMPOSSIBLE__
+  let clause = Clause
         { clauseLHSRange    = noRange
         , clauseFullRange   = noRange
         , clauseTel         = clauseTel
@@ -242,6 +242,7 @@ addMetaFun name tel mv x v = do
               tel
               (downFrom arity)
         , clauseBody        = Just $ clauseRHS
+        -- TODO: the function's modality should be compatible with the meta's modality
         , clauseType        = Just $ Arg defaultArgInfo clauseType
         , clauseCatchall    = False
         , clauseRecursive   = Nothing
@@ -249,17 +250,39 @@ addMetaFun name tel mv x v = do
         -- check if coverage checker is run
         , clauseUnreachable = Just False
         , clauseExact       = Just True
-        --
         , clauseWhereModule = Nothing
         }
       clauseRHS = v
-      defnArgInfo = defaultArgInfo
+  -- (splitTree, _, compiledClauses) <- compileClauses Nothing [clause]
+  let defn = FunctionDefn fun
+        { _funClauses = [clause]
+        -- , _funSplitTree = splitTree
+        -- , _funCompiled = Just compiledClauses
+        , _funCompiled = Just $ Done tel clauseRHS
+        , _funSplitTree = Just $ SplittingDone $ arity
+        -- check coverage checker
+        -- TODO: should be true
+        -- , _funTerminates = Just True
+        , _funCovering = [] -- or the same as funClauses
+        , _funFlags = Set.fromList $ [FunMeta]
+        }
+      -- TODO: checkInjectivity
+      -- But first, check if tc.inj.check:40 checks our function
+      defnArgInfo = ArgInfo
+        { argInfoModality = miModality $ mvInfo mv
+        , argInfoOrigin = MetaFun
+        , argInfoHiding = NotHidden
+        , argInfoFreeVariables = UnknownFVs
+        , argInfoAnnotation = defaultAnnotation
+        }
 
   reportSDoc "tc.meta.assign" 80 $ do
     vcat [ "adding meta function" <+> prettyTCM name <+> "for metavariable" <+> prettyTCM x
         , nest 2 $ prettyTCM clause
         , "with type"
         , nest 2 $ prettyTCM funType
+        , "of sort"
+        , nest 2 $ prettyTCM $ getSort funType
         , "with modality"
         , nest 2 $ text $ prettyShow $ getModality defnArgInfo
         ]
@@ -986,11 +1009,11 @@ assign dir x args v target = addOrUnblocker (unblockOnMeta x) $ do
 
   -- Andreas, 2010-10-15 I want to see whether rhs is blocked
   reportSLn "tc.meta.assign" 50 $ "MetaVars.assign: I want to see whether rhs is blocked"
-  reportSDoc "tc.meta.assign" 25 $ do
-    v0 <- reduceB v
-    case v0 of
-      Blocked m0 _ -> "r.h.s. blocked on:" <+> prettyTCM m0
-      NotBlocked{} -> "r.h.s. not blocked"
+  -- reportSDoc "tc.meta.assign" 25 $ do
+  --   v0 <- reduceB v
+  --   case v0 of
+  --     Blocked m0 _ -> "r.h.s. blocked on:" <+> prettyTCM m0
+  --     NotBlocked{} -> "r.h.s. not blocked"
   reportSDoc "tc.meta.assign" 25 $ "v = " <+> prettyTCM v
 
   -- Turn the assignment problem @_X args >= SizeLt u@ into

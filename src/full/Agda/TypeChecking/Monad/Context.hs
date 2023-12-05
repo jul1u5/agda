@@ -46,6 +46,7 @@ import Agda.Utils.Size
 import Agda.Utils.Update
 
 import Agda.Utils.Impossible
+import Debug.Trace (traceStack)
 
 -- * Modifying the context
 
@@ -220,6 +221,7 @@ instance MonadAddContext m => MonadAddContext (ListT m) where
 --   being shadowed by all the names with the same root that are added
 --   to the context during this TCM action.
 withShadowingNameTCM :: Name -> TCM b -> TCM b
+-- withShadowingNameTCM x f | traceStack "withShadowing" False = undefined
 withShadowingNameTCM x f = do
   reportSDoc "tc.cxt.shadowing" 80 $ pure $ "registered" <+> pretty x <+> "for shadowing"
   when (isInScope x == InScope) $ tellUsedName x

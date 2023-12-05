@@ -484,8 +484,8 @@ compareAtom cmp t m n =
     -- Andreas: what happens if I cut out the eta expansion here?
     -- Answer: Triggers issue 245, does not resolve 348
     (mb',nb') <- do
-      mb' <- etaExpandBlocked =<< reduceB m
-      nb' <- etaExpandBlocked =<< reduceB n
+      mb' <- verboseBracket "tc.conv.atom" 60 "reducing m" $ etaExpandBlocked =<< reduceB m
+      nb' <- verboseBracket "tc.conv.atom" 60 "reducing n" $ etaExpandBlocked =<< reduceB n
       return (mb', nb')
     let blocker = unblockOnEither (getBlocker mb') (getBlocker nb')
     reportSLn "tc.conv.atom.size" 50 $ "term size after reduce: " ++ show (termSize $ ignoreBlocking mb', termSize $ ignoreBlocking nb')

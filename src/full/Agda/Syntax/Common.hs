@@ -1525,6 +1525,7 @@ data Origin
   | CaseSplit    -- ^ Produced by an interactive case split.
   | Substitution -- ^ Named application produced to represent a substitution. E.g. "?0 (x = n)" instead of "?0 n"
   | ExpandedPun  -- ^ An expanded hidden argument pun.
+  | MetaFun
   deriving (Show, Eq, Ord)
 
 instance HasRange Origin where
@@ -1540,6 +1541,7 @@ instance NFData Origin where
   rnf CaseSplit = ()
   rnf Substitution = ()
   rnf ExpandedPun = ()
+  rnf MetaFun = ()
 
 -- | Decorating something with 'Origin' information.
 data WithOrigin a = WithOrigin

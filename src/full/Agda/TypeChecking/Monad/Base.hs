@@ -3105,9 +3105,13 @@ locallyReduceAllDefs :: MonadTCEnv m => m a -> m a
 locallyReduceAllDefs = locallyReduceDefs reduceAllDefs
 
 shouldReduceDef :: (MonadTCEnv m) => QName -> m Bool
-shouldReduceDef f = asksTC envReduceDefs <&> \case
-  OnlyReduceDefs defs -> f `Set.member` defs
-  DontReduceDefs defs -> not $ f `Set.member` defs
+shouldReduceDef f = do
+  -- TODO: getConstInfo is declared in a module .Signature which is cyclic
+  -- maybe move this function to a different module
+  -- def <- getConstInfo f
+  asksTC envReduceDefs <&> \case
+    OnlyReduceDefs defs -> f `Set.member` defs
+    DontReduceDefs defs -> not $ f `Set.member` defs
 
 toReduceDefs :: (Bool, [QName]) -> ReduceDefs
 toReduceDefs (True,  ns) = OnlyReduceDefs (Data.Set.fromList ns)
