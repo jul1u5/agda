@@ -104,6 +104,7 @@ module Agda.Interaction.Options.Base
     , lensOptSaveMetas
     , lensOptShowIdentitySubstitutions
     , lensOptKeepCoveringClauses
+    , lensOptInlineMetasSynEq
     -- * Boolean accessors to 'PragmaOptions' collapsing default
     , optShowImplicit
     , optShowIrrelevant
@@ -161,6 +162,7 @@ module Agda.Interaction.Options.Base
     , optKeepCoveringClauses
     , optLargeIndices
     , optForcedArgumentRecursion
+    , optInlineMetasSynEq
     -- * Non-boolean accessors to 'PragmaOptions'
     , optConfluenceCheck
     , optCubical
@@ -427,6 +429,8 @@ data PragmaOptions = PragmaOptions
       -- constructors.
   , _optForcedArgumentRecursion   :: WithDefault 'True
       -- ^ Allow recursion on forced constructor arguments.
+  , _optInlineMetasSynEq          :: WithDefault 'False
+      -- ^ Inline metavariable functions in syntactic equality checker
   }
   deriving (Show, Eq, Generic)
 
@@ -510,6 +514,7 @@ optShowIdentitySubstitutions :: PragmaOptions -> Bool
 optKeepCoveringClauses       :: PragmaOptions -> Bool
 optLargeIndices              :: PragmaOptions -> Bool
 optForcedArgumentRecursion   :: PragmaOptions -> Bool
+optInlineMetasSynEq          :: PragmaOptions -> Bool
 
 optShowImplicit              = collapseDefault . _optShowImplicit
 optShowIrrelevant            = collapseDefault . _optShowIrrelevant
@@ -570,6 +575,7 @@ optShowIdentitySubstitutions = collapseDefault . _optShowIdentitySubstitutions
 optKeepCoveringClauses       = collapseDefault . _optKeepCoveringClauses
 optLargeIndices              = collapseDefault . _optLargeIndices
 optForcedArgumentRecursion   = collapseDefault . _optForcedArgumentRecursion
+optInlineMetasSynEq          = collapseDefault . _optInlineMetasSynEq
 
 -- Collapse defaults (non-Bool)
 
@@ -805,6 +811,8 @@ lensOptLargeIndices f o = f (_optLargeIndices o) <&> \ i -> o{ _optLargeIndices 
 lensOptForcedArgumentRecursion :: Lens' PragmaOptions _
 lensOptForcedArgumentRecursion f o = f (_optForcedArgumentRecursion o) <&> \ i -> o{ _optForcedArgumentRecursion = i }
 
+lensOptInlineMetasSynEq :: Lens' PragmaOptions _
+lensOptInlineMetasSynEq f o = f (_optInlineMetasSynEq o) <&> \ i -> o{ _optInlineMetasSynEq = i}
 
 -- | Map a function over the long options. Also removes the short options.
 --   Will be used to add the plugin name to the plugin options.
@@ -913,6 +921,7 @@ defaultPragmaOptions = PragmaOptions
   , _optKeepCoveringClauses       = Default
   , _optForcedArgumentRecursion   = Default
   , _optLargeIndices              = Default
+  , _optInlineMetasSynEq          = Default
   }
 
 -- | The options parse monad 'OptM' collects warnings that are not discarded
@@ -1792,6 +1801,9 @@ pragmaOptions = concat
                     $ Just "always check that constructor arguments live in universes compatible with that of the datatype"
   , pragmaFlag      "forced-argument-recursion" lensOptForcedArgumentRecursion
                     "allow recursion on forced constructor arguments" ""
+                    Nothing
+  , pragmaFlag      "inline-metas-syneq" lensOptInlineMetasSynEq
+                    "inline metavariable functions in syntactic equality checker" ""
                     Nothing
   ]
 

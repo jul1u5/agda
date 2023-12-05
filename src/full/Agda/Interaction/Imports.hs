@@ -994,7 +994,8 @@ createInterface mname file isMain msrc = do
     setOptionsFromSourcePragmas src
     checkAttributes (srcAttributes src)
     syntactic <- optSyntacticEquality <$> pragmaOptions
-    localTC (\env -> env { envSyntacticEqualityFuel = syntactic }) $ do
+    inlineMetasSynEq <- optInlineMetasSynEq <$> pragmaOptions
+    localTC (\env -> env { envSyntacticEqualityFuel = syntactic, envInlineMetasSynEq = inlineMetasSynEq }) $ do
 
     verboseS "import.iface.create" 15 $ do
       nestingLevel      <- asksTC (pred . length . envImportPath)

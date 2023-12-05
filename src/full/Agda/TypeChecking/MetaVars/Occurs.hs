@@ -131,7 +131,12 @@ defNeedsChecking d = Set.member d <$> useTC stOccursCheckDefs
 
 -- | Remove a def from the list of defs to be looked at.
 tallyDef :: QName -> TCM ()
-tallyDef d = modifyOccursCheckDefs $ Set.delete d
+tallyDef d = do
+  def <- getConstInfo d
+  -- If we don't do this, then in Issue2430 we get a cyclic solution for metavariables 180 and 176.
+  unless (theDef def ^. funMeta) $
+    modifyOccursCheckDefs $ Set.delete d
+
 
 ---------------------------------------------------------------------------
 -- * OccursM monad and its services
@@ -463,6 +468,9 @@ occursCheck m xs v = Bench.billTo [ Bench.Typing, Bench.OccursCheck ] $ do
 instance Occurs Term where
   occurs v = do
     vb  <- unfoldB v
+    -- reportSDoc "tc.meta.occurs" 35 $ "blocked/nonblocked: " <+> case vb of
+    --   Blocked{theBlocker}    -> "blocked" <+> pretty theBlocker
+    --   NotBlocked{blockingStatus} -> "not blocked" <+> pretty blockingStatus
     let block = getBlocker vb
         -- On a failure, we should retry when any meta that is blocking
         -- the term is solved.
@@ -513,6 +521,17 @@ instance Occurs Term where
             onlyReduceTypes $ underRelevance Irrelevant $ occurs v
           Def d es    ->
             inliningMetaOnError d es $ do
+              -- defn <- getConstInfo d
+              -- let isFunMeta = theDef defn ^. funMeta
+              -- reportSDoc "tc.meta.flex" 50 $
+              --   pretty d <+> "is funMeta?" <+> pretty isFunMeta
+              -- let flexIfFunMeta x
+              --       | isFunMeta = do
+              --         reportSDoc "tc.meta.flex" 50 $
+              --           "Flexibly occurs checking function meta"
+              --         flexibly x
+              --       | otherwise = x
+
               definitionCheck d
               Def d <$> occDef d es
           Con c ci vs -> do
@@ -574,15 +593,40 @@ instance Occurs Term where
 
 inliningMetaOnError :: QName -> [Elim' Term] -> OccursM Term -> OccursM Term
 inliningMetaOnError d es mt = do
-  defn <- theDef <$> getConstInfo d
-  if defn ^. funMeta
-    then mt `catchError` onError
+  defn <- getConstInfo d
+  mb <- asksTC envMutualBlock
+
+  cxt <- ask
+  let dmod = getModality defn
+      inErased = hasQuantity0 cxt
+      modalityMatches = and
+        [ hasQuantity0 cxt || usableQuantity dmod
+        , isIrrelevant cxt || usableRelevance dmod
+        ]
+
+  -- let foreignMutualBlock = maybe True (defMutual defn /=) mb
+  -- let sameMutualBlock = True
+  let sameMutualBlock = maybe False (defMutual defn ==) mb
+  -- Q: Does 'maybe __IMPOSSIBLE__' work?
+  -- A: No, BlockOnFreshMeta fails then.
+  -- reportSDoc "tc.meta.occurs" 50 $ vcat
+    -- [ "Catching occurs error?"
+    -- , nest 2 $ pretty (theDef defn ^. funMeta) <+> pretty sameMutualBlock
+    -- ]
+  if theDef defn ^. funMeta && (not sameMutualBlock || not modalityMatches)
+  -- if theDef defn ^. funMeta && sameMutualBlock
+    then mt `catchError` inlineOnError
     else mt
   where
-    onError = \err -> do
-      let retryOccurs = do
-            u <- inlineMetaFun d es
-            occurs u
+    retryOccurs = do
+      reportSDoc "tc.meta.occurs" 50 $ vcat
+        [ "retrying with inlining"
+        ]
+      u <- inlineMetaFun d es
+      -- TODO: should we return the inlined term or the original one?
+      -- According to Andras: the original one.
+      occurs u
+    inlineOnError = \err -> do
       case err of
         PatternErr _ -> retryOccurs
         -- TODO: should we catch type error?

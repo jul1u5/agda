@@ -1,0 +1,14 @@
+packages: Agda.cabal
+ignore-project: False
+flags: +enable-cluster-counting
+optimization: False
+documentation: False
+
+package *
+  documentation: False
+
+package Agda
+  profiling: True
+  profiling-detail: all-functions
+  ghc-options: -j7 +RTS -A128M -M6G -RTS
+  -- ghc-options: -j7 -fprof-auto-calls +RTS -A128M -M6G -RTS

@@ -1396,6 +1396,7 @@ data MetaVariable =
                   --   ones it does not depend on
                 , mvJudgement     :: Judgement MetaId
                 , mvInstantiation :: MetaInstantiation
+                -- TODO: Add a flag whether a meta solution is big, and should not be inlined
                 , mvListeners     :: Set Listener -- ^ meta variables scheduled for eta-expansion but blocked by this one
                 , mvFrozen        :: Frozen -- ^ are we past the point where we can instantiate this meta variable?
                 , mvTwin          :: Maybe MetaId
@@ -3669,6 +3670,7 @@ data TCEnv =
                 -- the counter is decreased in the failure
                 -- continuation of
                 -- 'Agda.TypeChecking.SyntacticEquality.checkSyntacticEquality'.
+          , envInlineMetasSynEq :: Bool
           , envCurrentOpaqueId :: !(Maybe OpaqueId)
                 -- ^ Unique identifier of the opaque block we are
                 -- currently under, if any. Used by the scope checker
@@ -3738,6 +3740,7 @@ initEnv = TCEnv { envContext             = []
                 , envConflComputingOverlap  = False
                 , envCurrentlyElaborating   = False
                 , envSyntacticEqualityFuel  = Strict.Nothing
+                , envInlineMetasSynEq       = False
                 , envCurrentOpaqueId        = Nothing
                 }
 

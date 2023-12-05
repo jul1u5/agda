@@ -197,7 +197,8 @@ termMutual names0 = ifNotM (optTerminationCheck <$> pragmaOptions) (return mempt
 
     -- Trivially terminating (non-recursive)?
     when (null sccs) $
-      reportSLn "term.warn.yes" 10 $ "Trivially terminating: " ++ prettyShow names
+      -- reportSLn "term.warn.yes" 10 $ "Trivially terminating: " ++ prettyShow names
+      reportSLn "term.warn.yes" 10 $ "Trivially terminating: " ++ prettyShow allNames
 
     -- Actual termination checking needed: go through SCCs.
     concat <$> do

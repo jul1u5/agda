@@ -40,5 +40,7 @@ module _
 
   postulate
 
+    -- _ : let Point = λ (f : B y → B y) → ∀ x → R (f x) in
+    --     Class Point Point (method (Ext _) (Ext _) id)
     _ : let Point = λ (f : B y → B y) → ∀ x → R (f x) in
         Class Point Point (method (Ext _) (Ext _) id)

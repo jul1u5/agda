@@ -1,0 +1,12 @@
+packages: Agda.cabal
+ignore-project: False
+flags: +enable-cluster-counting +optimise-heavily
+profiling: False
+optimization: True
+documentation: False
+
+package *
+  documentation: False
+
+package Agda
+  ghc-options: -j7 +RTS -A128M -M6G -RTS

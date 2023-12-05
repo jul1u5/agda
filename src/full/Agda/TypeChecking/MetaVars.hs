@@ -144,6 +144,60 @@ assignTerm x tel v = do
     whenM (isFrozen x) __IMPOSSIBLE__
     assignTerm' x tel v
 
+class NoMeta a where
+  noMeta :: Int -> a -> Bool
+  default noMeta :: (a ~ [b], NoMeta b) => Int -> a -> Bool
+  noMeta k []     = True
+  noMeta 0 (_:_)  = False
+  noMeta k (x:xs) = noMeta k x && noMeta (k - 1) xs
+
+instance NoMeta Elims
+instance NoMeta [PlusLevel]
+
+instance NoMeta Elim where
+  noMeta :: Int -> Elim -> Bool
+  noMeta k (Apply x)  = noMeta k $ unArg x
+  noMeta k (Proj{})   = True
+  noMeta k (IApply{}) = True
+
+instance NoMeta Sort where
+  noMeta :: Int -> Sort -> Bool
+  noMeta k (Univ _ l)         = noMeta k l
+  noMeta k (Inf{})            = True
+  noMeta k (SizeUniv)         = True
+  noMeta k (LockUniv)         = True
+  noMeta k (LevelUniv)        = True
+  noMeta k (IntervalUniv)     = True
+  noMeta k (PiSort dom s abs) = False
+  noMeta k (FunSort s1 s2)    = noMeta (k - 1) s1 && noMeta (k - 1) s2
+  noMeta k (UnivSort s)       = noMeta k s
+  noMeta k (MetaS _ es)       = False
+  noMeta k (DefS _ es)        = noMeta k es
+  noMeta k (DummyS{})         = True
+
+instance NoMeta PlusLevel where
+  noMeta k (Plus _ l) = noMeta k l
+
+instance NoMeta Level where
+  noMeta k (Max _ plus) = noMeta k plus
+
+instance NoMeta Term where
+  noMeta :: Int -> Term -> Bool
+  noMeta _ MetaV{}      = False
+  noMeta _ Dummy{}      = True
+  noMeta _ Lit{}        = True
+  noMeta _ DontCare{}   = True
+  noMeta k (Sort t)     = noMeta k t
+  noMeta k (Level l)    = noMeta k l
+  noMeta k (Var _ es)   = noMeta k es
+  noMeta k (Def _ es)   = noMeta k es
+  noMeta k (Con _ _ es) = noMeta k es
+  noMeta k (Lam _ sc)   = noMeta (k - 1) $ unAbs sc
+  noMeta k (Pi b sc)    = and
+    [ noMeta (k - 1) $ unEl $ unDom b
+    , noMeta (k - 1) $ unEl $ unAbs sc
+    ]
+
 -- | Skip frozen check.  Used for eta expanding frozen metas.
 assignTermTCM' :: MetaId -> [Arg ArgName] -> Term -> TCM ()
 assignTermTCM' x tel v = do
@@ -167,20 +221,43 @@ assignTermTCM' x tel v = do
 
     let funType = jMetaType $ mvJudgement mv
     -- telViewUpTo needs to run in the right context, check that this is the case
-    t <- telViewUpTo 1 funType
+    t <- telView funType
     -- reportSDoc "tc.meta.assign" 80 $ "funType: " <+> prettyTCM funType
     -- TODO: there should be a nicer way to solve this
-    let hasGeneralizedArgs = case theTel t of
-          ExtendTel _ b -> absName b == "genTel"
-          _ -> False
+    -- Maybe mark the metavariable when it's generalized, and check
+    let hasGeneralizedArgs = any (== "genTel") $ map (fst . unDom) $ telToList $ theTel t
+          -- ExtendTel _ b -> absName b == "genTel"
+          -- _ -> False
 
-    let simpleTerm = case v of
-          -- Var _ [] -> True
-          -- Sort (Univ UType (Max _ [])) -> True
-          -- _ -> True
-          _ -> False
+    -- reportSDoc "tc.meta.assign" 70 $ vcat
+    --   [ "has genTel?" <+> pretty hasGeneralizedArgs
+    --   , nest 2 $ pretty $ map (fst . unDom) $ telToList $ theTel t
+    --   ]
 
-    inst <- if doGeneralize || hasGeneralizedArgs || simpleTerm then
+    -- let simpleTerm = case v of
+    --       Var _ [] -> True
+    --       -- Sort (Univ UType (Max _ [])) -> True
+    --       -- _ -> True
+    --       _ -> False
+
+    -- borrowed from Agda.TypeChecking.Inlining
+    -- let simpleTerm = False
+    let -- simpleTerm = all (< 2) counts && length counts < length tel
+        -- counts = IntMap.elems $ varCounts $ freeVars v
+
+        -- Borrowed from Idris2 (src/Core/Unify.idr)
+        -- A solution is deemed simple enough to inline if either:
+        --   * It is smaller than some threshold and has no metavariables in it
+        --   * It's just a metavariable itself
+        isSimple :: Term -> Bool
+        isSimple (MetaV{}) = True
+        isSimple (Lam _ sc) = isSimple $ unAbs sc
+        isSimple (Var _ es) = noMeta 3 es
+        isSimple (Def _ es) = noMeta 3 es
+        isSimple (Con _ _ es) = noMeta 3 es
+        isSimple tm = noMeta 0 tm
+
+    inst <- if doGeneralize || hasGeneralizedArgs || isSimple v then
       return Instantiation
         { instTel = tel
         , instBody = v
@@ -191,6 +268,7 @@ assignTermTCM' x tel v = do
         -- , instBody = killRange v
         }
     else do
+      whenProfile Profile.Metas $ tick "complex-metas"
       -- Create a new function definition containing the instantiation of
       -- the metavariable.
       -- TODO: Change name generation.
@@ -243,7 +321,7 @@ addMetaFun name tel mv x v = do
               (downFrom arity)
         , clauseBody        = Just $ clauseRHS
         -- TODO: the function's modality should be compatible with the meta's modality
-        , clauseType        = Just $ Arg defaultArgInfo clauseType
+        , clauseType        = Just $ Arg defaultArgInfo clauseType -- Should this be default?
         , clauseCatchall    = False
         , clauseRecursive   = Nothing
         , clauseEllipsis    = NoEllipsis
@@ -252,6 +330,17 @@ addMetaFun name tel mv x v = do
         , clauseExact       = Just True
         , clauseWhereModule = Nothing
         }
+      -- TODO: checkInjectivity
+      -- But first, check if tc.inj.check:40 checks our function
+      defnArgInfo =
+        -- defaultArgInfo
+        ArgInfo
+          { argInfoModality = miModality $ mvInfo mv
+          , argInfoOrigin = MetaFun
+          , argInfoHiding = NotHidden
+          , argInfoFreeVariables = UnknownFVs
+          , argInfoAnnotation = defaultAnnotation
+          }
       clauseRHS = v
   -- (splitTree, _, compiledClauses) <- compileClauses Nothing [clause]
   let defn = FunctionDefn fun
@@ -261,19 +350,9 @@ addMetaFun name tel mv x v = do
         , _funCompiled = Just $ Done tel clauseRHS
         , _funSplitTree = Just $ SplittingDone $ arity
         -- check coverage checker
-        -- TODO: should be true
         -- , _funTerminates = Just True
         , _funCovering = [] -- or the same as funClauses
-        , _funFlags = Set.fromList $ [FunMeta]
-        }
-      -- TODO: checkInjectivity
-      -- But first, check if tc.inj.check:40 checks our function
-      defnArgInfo = ArgInfo
-        { argInfoModality = miModality $ mvInfo mv
-        , argInfoOrigin = MetaFun
-        , argInfoHiding = NotHidden
-        , argInfoFreeVariables = UnknownFVs
-        , argInfoAnnotation = defaultAnnotation
+        , _funFlags = Set.singleton FunMeta
         }
 
   reportSDoc "tc.meta.assign" 80 $ do
@@ -296,7 +375,9 @@ addMetaFun name tel mv x v = do
   -- Otherwise, the definition will get lambda-lifted with superfluous arguments and
   -- things won't reduce properly.
   inTopContext $ addConstant'' IgnoreHardMode name .
+    -- Data.String.Base errors if this is not defaultArgInfo
     defaultDefn defnArgInfo name funType lang $ defn
+    -- defaultDefn defaultArgInfo name funType lang $ defn
 
 -- * Creating meta variables.
 

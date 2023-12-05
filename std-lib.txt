@@ -1,0 +1,629 @@
+======================================================================
+======================= Standard library test ========================
+======================================================================
+Checking README (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README.agda).
+ Checking README.Axiom (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Axiom.agda).
+  Checking Level (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Level.agda).
+  Finished Level.
+  Checking Relation.Nullary.Decidable (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Decidable.agda).
+   Checking Data.Bool.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Bool/Base.agda).
+    Checking Data.Unit.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Unit/Base.agda).
+     Loading  Agda.Builtin.Unit (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Unit.agdai).
+    Finished Data.Unit.Base.
+    Checking Data.Empty (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Empty.agda).
+     Checking Data.Irrelevant (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Irrelevant.agda).
+     Finished Data.Irrelevant.
+    Finished Data.Empty.
+    Loading  Agda.Builtin.Bool (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Bool.agdai).
+   Finished Data.Bool.Base.
+   Checking Data.Product.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Base.agda).
+    Checking Function.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Base.agda).
+    Finished Function.Base.
+    Loading  Agda.Builtin.Sigma (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Sigma.agdai).
+   Finished Data.Product.Base.
+   Checking Data.Sum.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum/Base.agda).
+   Finished Data.Sum.Base.
+   Checking Function.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Bundles.agda).
+    Checking Function.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Definitions.agda).
+     Checking Relation.Binary.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Core.agda).
+     Finished Relation.Binary.Core.
+    Finished Function.Definitions.
+    Checking Function.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Structures.agda).
+     Checking Relation.Binary.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Bundles.agda).
+      Checking Relation.Nullary.Negation (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Negation.agda).
+       Checking Effect.Monad (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Effect/Monad.agda).
+        Checking Data.Unit.Polymorphic.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Unit/Polymorphic/Base.agda).
+        Finished Data.Unit.Polymorphic.Base.
+        Checking Effect.Choice (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Effect/Choice.agda).
+        Finished Effect.Choice.
+        Checking Effect.Empty (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Effect/Empty.agda).
+        Finished Effect.Empty.
+        Checking Effect.Applicative (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Effect/Applicative.agda).
+         Checking Effect.Functor (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Effect/Functor.agda).
+          Checking Relation.Binary.PropositionalEquality.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/PropositionalEquality/Core.agda).
+           Checking Relation.Binary.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Definitions.agda).
+            Loading  Agda.Builtin.Equality (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Equality.agdai).
+            Checking Data.Maybe.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Maybe/Base.agda).
+             Checking Data.These.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/These/Base.agda).
+             Finished Data.These.Base.
+             Checking Relation.Nullary.Reflects (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Reflects.agda).
+              Checking Relation.Nullary.Negation.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Negation/Core.agda).
+               Checking Data.Empty.Irrelevant (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Empty/Irrelevant.agda).
+               Finished Data.Empty.Irrelevant.
+              Finished Relation.Nullary.Negation.Core.
+             Finished Relation.Nullary.Reflects.
+             Checking Relation.Nullary.Decidable.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Decidable/Core.agda).
+             Finished Relation.Nullary.Decidable.Core.
+             Loading  Agda.Builtin.Maybe (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Maybe.agdai).
+            Finished Data.Maybe.Base.
+           Finished Relation.Binary.Definitions.
+          Finished Relation.Binary.PropositionalEquality.Core.
+         Finished Effect.Functor.
+        Finished Effect.Applicative.
+       Finished Effect.Monad.
+       Checking Relation.Unary (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Unary.agda).
+       Finished Relation.Unary.
+      Finished Relation.Nullary.Negation.
+      Checking Relation.Binary.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Structures.agda).
+       Checking Relation.Binary.Consequences (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Consequences.agda).
+        Checking Relation.Nullary (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary.agda).
+        Finished Relation.Nullary.
+       Finished Relation.Binary.Consequences.
+      Finished Relation.Binary.Structures.
+     Finished Relation.Binary.Bundles.
+     Checking Function.Consequences (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Consequences.agda).
+     Finished Function.Consequences.
+    Finished Function.Structures.
+    Checking Relation.Binary.PropositionalEquality.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/PropositionalEquality/Properties.agda).
+     Checking Relation.Binary.Properties.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Properties/Setoid.agda).
+     Finished Relation.Binary.Properties.Setoid.
+    Finished Relation.Binary.PropositionalEquality.Properties.
+    Checking Function.Consequences.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Consequences/Propositional.agda).
+    Finished Function.Consequences.Propositional.
+   Finished Function.Bundles.
+  Finished Relation.Nullary.Decidable.
+  Checking Axiom.ExcludedMiddle (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Axiom/ExcludedMiddle.agda).
+  Finished Axiom.ExcludedMiddle.
+  Checking Axiom.DoubleNegationElimination (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Axiom/DoubleNegationElimination.agda).
+  Finished Axiom.DoubleNegationElimination.
+  Checking Axiom.Extensionality.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Axiom/Extensionality/Propositional.agda).
+  Finished Axiom.Extensionality.Propositional.
+  Checking Axiom.Extensionality.Heterogeneous (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Axiom/Extensionality/Heterogeneous.agda).
+   Checking Relation.Binary.HeterogeneousEquality.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/HeterogeneousEquality/Core.agda).
+   Finished Relation.Binary.HeterogeneousEquality.Core.
+  Finished Axiom.Extensionality.Heterogeneous.
+  Checking Axiom.UniquenessOfIdentityProofs (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Axiom/UniquenessOfIdentityProofs.agda).
+  Finished Axiom.UniquenessOfIdentityProofs.
+ Finished README.Axiom.
+ Checking README.Data (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data.agda).
+  Checking Data.Nat.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Base.agda).
+   Checking Algebra.Bundles.Raw (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Bundles/Raw.agda).
+    Checking Algebra.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Core.agda).
+    Finished Algebra.Core.
+   Finished Algebra.Bundles.Raw.
+   Checking Data.Parity.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Parity/Base.agda).
+    Checking Data.Sign.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sign/Base.agda).
+    Finished Data.Sign.Base.
+   Finished Data.Parity.Base.
+   Loading  Agda.Builtin.Nat (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Nat.agdai).
+  Finished Data.Nat.Base.
+  Checking Data.Integer.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Integer/Base.agda).
+   Loading  Agda.Builtin.Int (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Int.agdai).
+    Loading  Agda.Builtin.String (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/String.agdai).
+     Loading  Agda.Builtin.Char (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Char.agdai).
+     Loading  Agda.Builtin.List (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/List.agdai).
+  Finished Data.Integer.Base.
+  Checking Data.Char.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Char/Base.agda).
+   Checking Relation.Binary.Construct.Closure.Reflexive (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Closure/Reflexive.agda).
+    Checking Relation.Binary.Construct.Constant.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Constant/Core.agda).
+    Finished Relation.Binary.Construct.Constant.Core.
+   Finished Relation.Binary.Construct.Closure.Reflexive.
+  Finished Data.Char.Base.
+  Checking Data.String.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/String/Base.agda).
+   Checking Data.List.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Base.agda).
+    Checking Data.Fin.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Fin/Base.agda).
+     Checking Relation.Binary.Indexed.Heterogeneous.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Indexed/Heterogeneous/Core.agda).
+     Finished Relation.Binary.Indexed.Heterogeneous.Core.
+    Finished Data.Fin.Base.
+   Finished Data.List.Base.
+   Checking Data.List.NonEmpty.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/NonEmpty/Base.agda).
+    Checking Data.Vec.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Vec/Base.agda).
+    Finished Data.Vec.Base.
+    Checking Relation.Unary.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Unary/Properties.agda).
+    Finished Relation.Unary.Properties.
+   Finished Data.List.NonEmpty.Base.
+   Checking Data.List.Relation.Binary.Pointwise.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Pointwise/Base.agda).
+   Finished Data.List.Relation.Binary.Pointwise.Base.
+   Checking Data.List.Relation.Binary.Lex.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Lex/Core.agda).
+   Finished Data.List.Relation.Binary.Lex.Core.
+  Finished Data.String.Base.
+  Checking Data.Nat.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Properties.agda).
+   Checking Algebra.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Bundles.agda).
+    Checking Algebra.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Structures.agda).
+     Checking Algebra.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Definitions.agda).
+     Finished Algebra.Definitions.
+     Checking Algebra.Consequences.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Consequences/Setoid.agda).
+      Checking Relation.Binary.Reasoning.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Reasoning/Setoid.agda).
+       Checking Relation.Binary.Reasoning.Base.Single (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Reasoning/Base/Single.agda).
+       Finished Relation.Binary.Reasoning.Base.Single.
+      Finished Relation.Binary.Reasoning.Setoid.
+      Checking Algebra.Consequences.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Consequences/Base.agda).
+      Finished Algebra.Consequences.Base.
+     Finished Algebra.Consequences.Setoid.
+    Finished Algebra.Structures.
+   Finished Algebra.Bundles.
+   Checking Algebra.Morphism (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Morphism.agda).
+    Checking Algebra.Morphism.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Morphism/Definitions.agda).
+    Finished Algebra.Morphism.Definitions.
+    Checking Algebra (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra.agda).
+     Checking Algebra.Structures.Biased (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Structures/Biased.agda).
+     Finished Algebra.Structures.Biased.
+    Finished Algebra.
+    Checking Algebra.Properties.Group (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Properties/Group.agda).
+    Finished Algebra.Properties.Group.
+    Checking Algebra.Morphism.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Morphism/Structures.agda).
+     Checking Relation.Binary.Morphism.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Morphism/Structures.agda).
+      Checking Relation.Binary.Morphism.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Morphism/Definitions.agda).
+       Checking Function.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Core.agda).
+       Finished Function.Core.
+      Finished Relation.Binary.Morphism.Definitions.
+     Finished Relation.Binary.Morphism.Structures.
+    Finished Algebra.Morphism.Structures.
+   Finished Algebra.Morphism.
+   Checking Algebra.Consequences.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Consequences/Propositional.agda).
+    Checking Relation.Binary.PropositionalEquality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/PropositionalEquality.agda).
+     Checking Function.Dependent.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Dependent/Bundles.agda).
+      Checking Relation.Binary.Indexed.Heterogeneous (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Indexed/Heterogeneous.agda).
+       Checking Relation.Binary.Indexed.Heterogeneous.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Indexed/Heterogeneous/Definitions.agda).
+       Finished Relation.Binary.Indexed.Heterogeneous.Definitions.
+       Checking Relation.Binary.Indexed.Heterogeneous.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Indexed/Heterogeneous/Structures.agda).
+       Finished Relation.Binary.Indexed.Heterogeneous.Structures.
+       Checking Relation.Binary.Indexed.Heterogeneous.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Indexed/Heterogeneous/Bundles.agda).
+       Finished Relation.Binary.Indexed.Heterogeneous.Bundles.
+      Finished Relation.Binary.Indexed.Heterogeneous.
+     Finished Function.Dependent.Bundles.
+     Checking Function.Indexed.Relation.Binary.Equality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Indexed/Relation/Binary/Equality.agda).
+      Checking Relation.Binary (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary.agda).
+      Finished Relation.Binary.
+     Finished Function.Indexed.Relation.Binary.Equality.
+     Checking Relation.Binary.Indexed.Heterogeneous.Construct.Trivial (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Indexed/Heterogeneous/Construct/Trivial.agda).
+     Finished Relation.Binary.Indexed.Heterogeneous.Construct.Trivial.
+     Checking Relation.Binary.PropositionalEquality.Algebra (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/PropositionalEquality/Algebra.agda).
+     Finished Relation.Binary.PropositionalEquality.Algebra.
+    Finished Relation.Binary.PropositionalEquality.
+   Finished Algebra.Consequences.Propositional.
+   Checking Algebra.Construct.NaturalChoice.Base (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Construct/NaturalChoice/Base.agda).
+    Checking Relation.Binary.Construct.Flip.EqAndOrd (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Flip/EqAndOrd.agda).
+    Finished Relation.Binary.Construct.Flip.EqAndOrd.
+    Checking Relation.Binary.Properties.TotalOrder (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Properties/TotalOrder.agda).
+     Checking Relation.Binary.Construct.NonStrictToStrict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/NonStrictToStrict.agda).
+     Finished Relation.Binary.Construct.NonStrictToStrict.
+     Checking Relation.Binary.Properties.Poset (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Properties/Poset.agda).
+      Checking Relation.Binary.Properties.Preorder (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Properties/Preorder.agda).
+      Finished Relation.Binary.Properties.Preorder.
+     Finished Relation.Binary.Properties.Poset.
+    Finished Relation.Binary.Properties.TotalOrder.
+   Finished Algebra.Construct.NaturalChoice.Base.
+   Checking Algebra.Construct.NaturalChoice.MinMaxOp (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Construct/NaturalChoice/MinMaxOp.agda).
+    Checking Relation.Binary.Reasoning.Preorder (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Reasoning/Preorder.agda).
+     Checking Relation.Binary.Reasoning.Base.Double (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Reasoning/Base/Double.agda).
+     Finished Relation.Binary.Reasoning.Base.Double.
+    Finished Relation.Binary.Reasoning.Preorder.
+    Checking Algebra.Construct.NaturalChoice.MinOp (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Construct/NaturalChoice/MinOp.agda).
+    Finished Algebra.Construct.NaturalChoice.MinOp.
+    Checking Algebra.Construct.NaturalChoice.MaxOp (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Construct/NaturalChoice/MaxOp.agda).
+    Finished Algebra.Construct.NaturalChoice.MaxOp.
+   Finished Algebra.Construct.NaturalChoice.MinMaxOp.
+   Checking Algebra.Lattice.Construct.NaturalChoice.MinMaxOp (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Construct/NaturalChoice/MinMaxOp.agda).
+    Checking Algebra.Lattice.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Bundles.agda).
+     Checking Algebra.Lattice.Bundles.Raw (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Bundles/Raw.agda).
+     Finished Algebra.Lattice.Bundles.Raw.
+     Checking Algebra.Lattice.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Structures.agda).
+     Finished Algebra.Lattice.Structures.
+    Finished Algebra.Lattice.Bundles.
+    Checking Algebra.Lattice.Construct.NaturalChoice.MinOp (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Construct/NaturalChoice/MinOp.agda).
+    Finished Algebra.Lattice.Construct.NaturalChoice.MinOp.
+    Checking Algebra.Lattice.Construct.NaturalChoice.MaxOp (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Construct/NaturalChoice/MaxOp.agda).
+    Finished Algebra.Lattice.Construct.NaturalChoice.MaxOp.
+   Finished Algebra.Lattice.Construct.NaturalChoice.MinMaxOp.
+   Checking Algebra.Properties.CommutativeSemigroup (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Properties/CommutativeSemigroup.agda).
+    Checking Algebra.Properties.Semigroup (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Properties/Semigroup.agda).
+    Finished Algebra.Properties.Semigroup.
+   Finished Algebra.Properties.CommutativeSemigroup.
+   Checking Data.Bool.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Bool/Properties.agda).
+    Checking Algebra.Lattice.Properties.BooleanAlgebra (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Properties/BooleanAlgebra.agda).
+     Checking Algebra.Lattice.Properties.DistributiveLattice (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Properties/DistributiveLattice.agda).
+      Checking Algebra.Lattice.Properties.Lattice (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Properties/Lattice.agda).
+       Checking Algebra.Lattice.Properties.Semilattice (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Lattice/Properties/Semilattice.agda).
+        Checking Relation.Binary.Lattice (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Lattice.agda).
+         Checking Relation.Binary.Lattice.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Lattice/Definitions.agda).
+         Finished Relation.Binary.Lattice.Definitions.
+         Checking Relation.Binary.Lattice.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Lattice/Structures.agda).
+         Finished Relation.Binary.Lattice.Structures.
+         Checking Relation.Binary.Lattice.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Lattice/Bundles.agda).
+         Finished Relation.Binary.Lattice.Bundles.
+        Finished Relation.Binary.Lattice.
+        Checking Relation.Binary.Construct.NaturalOrder.Left (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/NaturalOrder/Left.agda).
+        Finished Relation.Binary.Construct.NaturalOrder.Left.
+       Finished Algebra.Lattice.Properties.Semilattice.
+      Finished Algebra.Lattice.Properties.Lattice.
+     Finished Algebra.Lattice.Properties.DistributiveLattice.
+    Finished Algebra.Lattice.Properties.BooleanAlgebra.
+    Checking Induction.WellFounded (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Induction/WellFounded.agda).
+     Checking Induction (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Induction.agda).
+     Finished Induction.
+    Finished Induction.WellFounded.
+   Finished Data.Bool.Properties.
+   Checking Data.Unit (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Unit.agda).
+    Checking Data.Unit.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Unit/Properties.agda).
+    Finished Data.Unit.Properties.
+   Finished Data.Unit.
+   Checking Function.Metric.Nat (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Nat.agda).
+    Checking Function.Metric.Nat.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Nat/Core.agda).
+     Checking Function.Metric.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Core.agda).
+     Finished Function.Metric.Core.
+    Finished Function.Metric.Nat.Core.
+    Checking Function.Metric.Nat.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Nat/Definitions.agda).
+     Checking Function.Metric.Definitions (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Definitions.agda).
+     Finished Function.Metric.Definitions.
+    Finished Function.Metric.Nat.Definitions.
+    Checking Function.Metric.Nat.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Nat/Structures.agda).
+     Checking Function.Metric.Structures (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Structures.agda).
+     Finished Function.Metric.Structures.
+    Finished Function.Metric.Nat.Structures.
+    Checking Function.Metric.Nat.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Nat/Bundles.agda).
+     Checking Function.Metric.Bundles (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Metric/Bundles.agda).
+     Finished Function.Metric.Bundles.
+    Finished Function.Metric.Nat.Bundles.
+   Finished Function.Metric.Nat.
+   Checking Relation.Binary.Reasoning.Base.Triple (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Reasoning/Base/Triple.agda).
+   Finished Relation.Binary.Reasoning.Base.Triple.
+  Finished Data.Nat.Properties.
+  Checking Data.Integer.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Integer/Properties.agda).
+   Checking Algebra.Properties.AbelianGroup (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Properties/AbelianGroup.agda).
+   Finished Algebra.Properties.AbelianGroup.
+   Checking Data.Nat (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat.agda).
+   Finished Data.Nat.
+   Checking Data.Nat.Solver (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Solver.agda).
+    Checking Algebra.Solver.Ring.Simple (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Solver/Ring/Simple.agda).
+     Checking Algebra.Solver.Ring.AlmostCommutativeRing (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Solver/Ring/AlmostCommutativeRing.agda).
+      Checking Algebra.Properties.Ring (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Properties/Ring.agda).
+      Finished Algebra.Properties.Ring.
+     Finished Algebra.Solver.Ring.AlmostCommutativeRing.
+     Checking Algebra.Solver.Ring (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Solver/Ring.agda).
+      Checking Algebra.Solver.Ring.Lemmas (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Solver/Ring/Lemmas.agda).
+      Finished Algebra.Solver.Ring.Lemmas.
+      Checking Algebra.Properties.Semiring.Exp (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Properties/Semiring/Exp.agda).
+       Checking Algebra.Properties.Monoid.Mult (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Properties/Monoid/Mult.agda).
+        Checking Algebra.Definitions.RawMonoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Definitions/RawMonoid.agda).
+         Checking Data.Vec.Functional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Vec/Functional.agda).
+         Finished Data.Vec.Functional.
+         Checking Algebra.Definitions.RawMagma (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Definitions/RawMagma.agda).
+         Finished Algebra.Definitions.RawMagma.
+        Finished Algebra.Definitions.RawMonoid.
+       Finished Algebra.Properties.Monoid.Mult.
+       Checking Algebra.Definitions.RawSemiring (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Definitions/RawSemiring.agda).
+       Finished Algebra.Definitions.RawSemiring.
+      Finished Algebra.Properties.Semiring.Exp.
+      Checking Relation.Binary.Reflection (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Reflection.agda).
+       Checking Data.Vec.N-ary (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Vec/N-ary.agda).
+       Finished Data.Vec.N-ary.
+      Finished Relation.Binary.Reflection.
+     Finished Algebra.Solver.Ring.
+    Finished Algebra.Solver.Ring.Simple.
+   Finished Data.Nat.Solver.
+   Checking Data.Sign (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sign.agda).
+    Checking Data.Sign.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sign/Properties.agda).
+    Finished Data.Sign.Properties.
+   Finished Data.Sign.
+  Finished Data.Integer.Properties.
+  Checking Data.Char.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Char/Properties.agda).
+   Checking Relation.Binary.Construct.On (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/On.agda).
+   Finished Relation.Binary.Construct.On.
+   Checking Relation.Binary.Construct.Subst.Equality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Subst/Equality.agda).
+   Finished Relation.Binary.Construct.Subst.Equality.
+   Checking Relation.Binary.Construct.Closure.Reflexive.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Closure/Reflexive/Properties.agda).
+   Finished Relation.Binary.Construct.Closure.Reflexive.Properties.
+   Loading  Agda.Builtin.Char.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Char/Properties.agdai).
+  Finished Data.Char.Properties.
+  Checking Data.String.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/String/Properties.agda).
+   Checking Data.List.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Properties.agda).
+    Checking Data.List.Membership.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Membership/Propositional.agda).
+     Checking Data.List.Relation.Unary.Any (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Unary/Any.agda).
+     Finished Data.List.Relation.Unary.Any.
+     Checking Data.List.Membership.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Membership/Setoid.agda).
+     Finished Data.List.Membership.Setoid.
+    Finished Data.List.Membership.Propositional.
+    Checking Data.List.Relation.Unary.All (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Unary/All.agda).
+    Finished Data.List.Relation.Unary.All.
+    Checking Data.Nat.Divisibility (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Divisibility.agda).
+     Checking Data.Nat.DivMod (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/DivMod.agda).
+      Checking Data.Fin.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Fin/Properties.agda).
+       Checking Data.Fin.Patterns (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Fin/Patterns.agda).
+       Finished Data.Fin.Patterns.
+       Checking Data.Product.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Properties.agda).
+       Finished Data.Product.Properties.
+       Checking Data.Product.Algebra (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Algebra.agda).
+        Checking Data.Empty.Polymorphic (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Empty/Polymorphic.agda).
+        Finished Data.Empty.Polymorphic.
+        Checking Data.Sum.Algebra (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum/Algebra.agda).
+         Checking Data.Sum.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum/Properties.agda).
+         Finished Data.Sum.Properties.
+         Checking Data.Unit.Polymorphic (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Unit/Polymorphic.agda).
+          Checking Data.Unit.Polymorphic.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Unit/Polymorphic/Properties.agda).
+          Finished Data.Unit.Polymorphic.Properties.
+         Finished Data.Unit.Polymorphic.
+         Checking Function.Properties.Inverse (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Properties/Inverse.agda).
+          Checking Function.Properties.RightInverse (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Properties/RightInverse.agda).
+          Finished Function.Properties.RightInverse.
+          Checking Function.Construct.Identity (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Construct/Identity.agda).
+          Finished Function.Construct.Identity.
+          Checking Function.Construct.Symmetry (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Construct/Symmetry.agda).
+          Finished Function.Construct.Symmetry.
+          Checking Function.Construct.Composition (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Construct/Composition.agda).
+          Finished Function.Construct.Composition.
+         Finished Function.Properties.Inverse.
+        Finished Data.Sum.Algebra.
+       Finished Data.Product.Algebra.
+      Finished Data.Fin.Properties.
+      Checking Data.Nat.DivMod.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/DivMod/Core.agda).
+      Finished Data.Nat.DivMod.Core.
+      Checking Data.Nat.Divisibility.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Divisibility/Core.agda).
+      Finished Data.Nat.Divisibility.Core.
+      Checking Data.Nat.Induction (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Induction.agda).
+      Finished Data.Nat.Induction.
+     Finished Data.Nat.DivMod.
+    Finished Data.Nat.Divisibility.
+    Checking Data.Product.Relation.Unary.All (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Relation/Unary/All.agda).
+    Finished Data.Product.Relation.Unary.All.
+   Finished Data.List.Properties.
+   Checking Data.List.Relation.Binary.Pointwise (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Pointwise.agda).
+    Checking Data.List.Relation.Unary.AllPairs (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Unary/AllPairs.agda).
+     Checking Relation.Binary.Construct.Intersection (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Intersection.agda).
+     Finished Relation.Binary.Construct.Intersection.
+     Checking Data.List.Relation.Unary.AllPairs.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Unary/AllPairs/Core.agda).
+     Finished Data.List.Relation.Unary.AllPairs.Core.
+    Finished Data.List.Relation.Unary.AllPairs.
+    Checking Data.List.Relation.Binary.Pointwise.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Pointwise/Properties.agda).
+    Finished Data.List.Relation.Binary.Pointwise.Properties.
+   Finished Data.List.Relation.Binary.Pointwise.
+   Checking Data.List.Relation.Binary.Lex.Strict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Lex/Strict.agda).
+    Checking Data.List.Relation.Binary.Lex (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Lex.agda).
+    Finished Data.List.Relation.Binary.Lex.
+   Finished Data.List.Relation.Binary.Lex.Strict.
+   Loading  Agda.Builtin.String.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/String/Properties.agdai).
+  Finished Data.String.Properties.
+  Checking Data.Integer (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Integer.agda).
+   Checking Data.Nat.Show (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Show.agda).
+    Checking Data.Digit (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Digit.agda).
+    Finished Data.Digit.
+    Checking Data.List.Effectful (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Effectful.agda).
+    Finished Data.List.Effectful.
+    Checking Data.Maybe.Effectful (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Maybe/Effectful.agda).
+    Finished Data.Maybe.Effectful.
+   Finished Data.Nat.Show.
+  Finished Data.Integer.
+  Checking Data.Char (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Char.agda).
+  Finished Data.Char.
+  Checking Data.String (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/String.agda).
+   Checking Data.List.Extrema (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Extrema.agda).
+    Checking Algebra.Construct.NaturalChoice.Min (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Construct/NaturalChoice/Min.agda).
+    Finished Algebra.Construct.NaturalChoice.Min.
+    Checking Algebra.Construct.NaturalChoice.Max (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Construct/NaturalChoice/Max.agda).
+    Finished Algebra.Construct.NaturalChoice.Max.
+    Checking Data.List.Membership.Propositional.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Membership/Propositional/Properties.agda).
+     Checking Data.List.Relation.Unary.Any.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Unary/Any/Properties.agda).
+      Checking Data.List.Membership.Propositional.Properties.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Membership/Propositional/Properties/Core.agda).
+      Finished Data.List.Membership.Propositional.Properties.Core.
+      Checking Data.Maybe.Relation.Unary.Any (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Maybe/Relation/Unary/Any.agda).
+      Finished Data.Maybe.Relation.Unary.Any.
+      Checking Data.Product.Function.NonDependent.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Function/NonDependent/Propositional.agda).
+       Checking Data.Product.Function.NonDependent.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Function/NonDependent/Setoid.agda).
+        Checking Data.Product.Relation.Binary.Pointwise.NonDependent (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Relation/Binary/Pointwise/NonDependent.agda).
+         Checking Function (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function.agda).
+          Checking Function.Strict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Strict.agda).
+           Loading  Agda.Builtin.Strict (/home/julius/code/Chalmers/RA/agda-meta-sharing/src/data/lib/prim/Agda/Builtin/Strict.agdai).
+          Finished Function.Strict.
+         Finished Function.
+        Finished Data.Product.Relation.Binary.Pointwise.NonDependent.
+       Finished Data.Product.Function.NonDependent.Setoid.
+       Checking Function.Related.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Related/Propositional.agda).
+        Checking Function.Properties.Surjection (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Properties/Surjection.agda).
+        Finished Function.Properties.Surjection.
+        Checking Function.Properties.Bijection (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Properties/Bijection.agda).
+        Finished Function.Properties.Bijection.
+       Finished Function.Related.Propositional.
+      Finished Data.Product.Function.NonDependent.Propositional.
+      Checking Data.Product.Function.Dependent.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Function/Dependent/Propositional.agda).
+       Checking Function.Related.TypeIsomorphisms (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Related/TypeIsomorphisms.agda).
+        Checking Data.Sum.Function.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum/Function/Propositional.agda).
+         Checking Data.Sum.Function.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum/Function/Setoid.agda).
+          Checking Data.Sum.Relation.Binary.Pointwise (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum/Relation/Binary/Pointwise.agda).
+          Finished Data.Sum.Relation.Binary.Pointwise.
+         Finished Data.Sum.Function.Setoid.
+        Finished Data.Sum.Function.Propositional.
+        Checking Relation.Nullary.Indexed (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Indexed.agda).
+        Finished Relation.Nullary.Indexed.
+       Finished Function.Related.TypeIsomorphisms.
+       Checking Function.Properties.Inverse.HalfAdjointEquivalence (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Properties/Inverse/HalfAdjointEquivalence.agda).
+       Finished Function.Properties.Inverse.HalfAdjointEquivalence.
+      Finished Data.Product.Function.Dependent.Propositional.
+     Finished Data.List.Relation.Unary.Any.Properties.
+     Checking Data.List.Membership.Setoid.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Membership/Setoid/Properties.agda).
+      Checking Data.List.Relation.Binary.Equality.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Equality/Setoid.agda).
+       Checking Data.List.Relation.Unary.Unique.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Unary/Unique/Setoid.agda).
+       Finished Data.List.Relation.Unary.Unique.Setoid.
+      Finished Data.List.Relation.Binary.Equality.Setoid.
+     Finished Data.List.Membership.Setoid.Properties.
+     Checking Data.List.Relation.Binary.Equality.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Equality/Propositional.agda).
+     Finished Data.List.Relation.Binary.Equality.Propositional.
+     Checking Relation.Binary.Properties.DecTotalOrder (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Properties/DecTotalOrder.agda).
+     Finished Relation.Binary.Properties.DecTotalOrder.
+    Finished Data.List.Membership.Propositional.Properties.
+    Checking Data.List.Relation.Binary.Subset.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Subset/Propositional.agda).
+     Checking Data.List.Relation.Binary.Subset.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Binary/Subset/Setoid.agda).
+     Finished Data.List.Relation.Binary.Subset.Setoid.
+    Finished Data.List.Relation.Binary.Subset.Propositional.
+    Checking Data.List.Extrema.Core (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Extrema/Core.agda).
+     Checking Algebra.Construct.LiftedChoice (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Algebra/Construct/LiftedChoice.agda).
+     Finished Algebra.Construct.LiftedChoice.
+    Finished Data.List.Extrema.Core.
+   Finished Data.List.Extrema.
+   Checking Data.List.Membership.DecPropositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Membership/DecPropositional.agda).
+    Checking Data.List.Membership.DecSetoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Membership/DecSetoid.agda).
+    Finished Data.List.Membership.DecSetoid.
+   Finished Data.List.Membership.DecPropositional.
+  Finished Data.String.
+  Checking Data.Bool (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Bool.agda).
+  Finished Data.Bool.
+  Checking Data.Integer.Solver (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Integer/Solver.agda).
+  Finished Data.Integer.Solver.
+  Checking Data.Bool.Solver (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Bool/Solver.agda).
+  Finished Data.Bool.Solver.
+  Checking Data.Integer.Coprimality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Integer/Coprimality.agda).
+   Checking Data.Integer.Divisibility (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Integer/Divisibility.agda).
+    Checking Data.Nat.Coprimality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Coprimality.agda).
+     Checking Data.Nat.GCD (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/GCD.agda).
+      Checking Data.Nat.GCD.Lemmas (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/GCD/Lemmas.agda).
+      Finished Data.Nat.GCD.Lemmas.
+      Checking Induction.Lexicographic (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Induction/Lexicographic.agda).
+      Finished Induction.Lexicographic.
+     Finished Data.Nat.GCD.
+     Checking Data.Nat.Primality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Nat/Primality.agda).
+     Finished Data.Nat.Primality.
+    Finished Data.Nat.Coprimality.
+   Finished Data.Integer.Divisibility.
+  Finished Data.Integer.Coprimality.
+  Checking Data.Maybe.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Maybe/Properties.agda).
+   Checking Data.Maybe.Relation.Unary.All (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Maybe/Relation/Unary/All.agda).
+   Finished Data.Maybe.Relation.Unary.All.
+  Finished Data.Maybe.Properties.
+  Checking Data.List (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List.agda).
+  Finished Data.List.
+  Checking Data.Maybe (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Maybe.agda).
+  Finished Data.Maybe.
+  Checking Data.Sum (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum.agda).
+  Finished Data.Sum.
+  Checking Data.Maybe.Relation.Binary.Pointwise (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Maybe/Relation/Binary/Pointwise.agda).
+  Finished Data.Maybe.Relation.Binary.Pointwise.
+  Checking Data.Vec.Relation.Unary.Any (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Vec/Relation/Unary/Any.agda).
+  Finished Data.Vec.Relation.Unary.Any.
+  Checking Data.Vec.Relation.Unary.All (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Vec/Relation/Unary/All.agda).
+   Checking Data.Vec.Membership.Propositional (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Vec/Membership/Propositional.agda).
+    Checking Data.Vec.Membership.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Vec/Membership/Setoid.agda).
+    Finished Data.Vec.Membership.Setoid.
+   Finished Data.Vec.Membership.Propositional.
+  Finished Data.Vec.Relation.Unary.All.
+  Checking Data.Sum.Effectful.Left (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum/Effectful/Left.agda).
+  Finished Data.Sum.Effectful.Left.
+  Checking Data.Sum.Effectful.Right (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Sum/Effectful/Right.agda).
+  Finished Data.Sum.Effectful.Right.
+  Checking Data.Product.Function.Dependent.Setoid (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Function/Dependent/Setoid.agda).
+   Checking Data.Product.Relation.Binary.Pointwise.Dependent (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Product/Relation/Binary/Pointwise/Dependent.agda).
+   Finished Data.Product.Relation.Binary.Pointwise.Dependent.
+   Checking Function.Properties.Injection (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Properties/Injection.agda).
+   Finished Function.Properties.Injection.
+   Checking Function.Properties.Equivalence (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Function/Properties/Equivalence.agda).
+   Finished Function.Properties.Equivalence.
+   Checking Relation.Binary.Indexed.Heterogeneous.Construct.At (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Indexed/Heterogeneous/Construct/At.agda).
+   Finished Relation.Binary.Indexed.Heterogeneous.Construct.At.
+  Finished Data.Product.Function.Dependent.Setoid.
+  Checking README.Data.Nat (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data/Nat.agda).
+  Finished README.Data.Nat.
+  Checking README.Data.Nat.Induction (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data/Nat/Induction.agda).
+  Finished README.Data.Nat.Induction.
+  Checking README.Data.Integer (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data/Integer.agda).
+  Finished README.Data.Integer.
+  Checking README.Data.Tree.AVL (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data/Tree/AVL.agda).
+   Checking Data.Tree.AVL (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Tree/AVL.agda).
+    Checking Data.DifferenceList (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/DifferenceList.agda).
+    Finished Data.DifferenceList.
+    Checking Data.Tree.AVL.Indexed (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Tree/AVL/Indexed.agda).
+     Checking Data.Tree.AVL.Key (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Tree/AVL/Key.agda).
+      Checking Relation.Nullary.Construct.Add.Extrema (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Construct/Add/Extrema.agda).
+       Checking Relation.Nullary.Construct.Add.Infimum (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Construct/Add/Infimum.agda).
+        Checking Relation.Nullary.Construct.Add.Point (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Construct/Add/Point.agda).
+        Finished Relation.Nullary.Construct.Add.Point.
+       Finished Relation.Nullary.Construct.Add.Infimum.
+       Checking Relation.Nullary.Construct.Add.Supremum (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Nullary/Construct/Add/Supremum.agda).
+       Finished Relation.Nullary.Construct.Add.Supremum.
+      Finished Relation.Nullary.Construct.Add.Extrema.
+      Checking Relation.Binary.Construct.Add.Extrema.Equality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Extrema/Equality.agda).
+       Checking Relation.Binary.Construct.Add.Infimum.Equality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Infimum/Equality.agda).
+        Checking Relation.Binary.Construct.Add.Point.Equality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Point/Equality.agda).
+        Finished Relation.Binary.Construct.Add.Point.Equality.
+       Finished Relation.Binary.Construct.Add.Infimum.Equality.
+       Checking Relation.Binary.Construct.Add.Supremum.Equality (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Supremum/Equality.agda).
+       Finished Relation.Binary.Construct.Add.Supremum.Equality.
+      Finished Relation.Binary.Construct.Add.Extrema.Equality.
+      Checking Relation.Binary.Construct.Add.Extrema.Strict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Extrema/Strict.agda).
+       Checking Relation.Binary.Construct.Add.Infimum.Strict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Infimum/Strict.agda).
+        Checking Relation.Binary.Construct.Add.Infimum.NonStrict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Infimum/NonStrict.agda).
+        Finished Relation.Binary.Construct.Add.Infimum.NonStrict.
+       Finished Relation.Binary.Construct.Add.Infimum.Strict.
+       Checking Relation.Binary.Construct.Add.Supremum.Strict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Supremum/Strict.agda).
+        Checking Relation.Binary.Construct.Add.Supremum.NonStrict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Supremum/NonStrict.agda).
+        Finished Relation.Binary.Construct.Add.Supremum.NonStrict.
+       Finished Relation.Binary.Construct.Add.Supremum.Strict.
+       Checking Relation.Binary.Construct.Add.Extrema.NonStrict (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Relation/Binary/Construct/Add/Extrema/NonStrict.agda).
+       Finished Relation.Binary.Construct.Add.Extrema.NonStrict.
+      Finished Relation.Binary.Construct.Add.Extrema.Strict.
+     Finished Data.Tree.AVL.Key.
+     Checking Data.Tree.AVL.Value (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Tree/AVL/Value.agda).
+     Finished Data.Tree.AVL.Value.
+     Checking Data.Tree.AVL.Height (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Tree/AVL/Height.agda).
+     Finished Data.Tree.AVL.Height.
+    Finished Data.Tree.AVL.Indexed.
+   Finished Data.Tree.AVL.
+   Checking Data.Tree.AVL.IndexedMap (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Tree/AVL/IndexedMap.agda).
+   Finished Data.Tree.AVL.IndexedMap.
+   Checking Data.Tree.AVL.Sets (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Tree/AVL/Sets.agda).
+    Checking Data.Tree.AVL.Map (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/Tree/AVL/Map.agda).
+    Finished Data.Tree.AVL.Map.
+   Finished Data.Tree.AVL.Sets.
+  Finished README.Data.Tree.AVL.
+  Checking README.Data.List (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data/List.agda).
+   Checking README.Data.List.Relation.Unary.Any (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data/List/Relation/Unary/Any.agda).
+   Finished README.Data.List.Relation.Unary.Any.
+   Checking README.Data.List.Relation.Unary.All (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data/List/Relation/Unary/All.agda).
+    Checking Data.List.Relation.Unary.All.Properties (/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/src/Data/List/Relation/Unary/All/Properties.agda).
+Total                        194,052ms           
+Miscellaneous                  1,365ms           
+Typing                        17,417ms (76,437ms)
+Typing.CheckRHS               24,696ms           
+Typing.CheckLHS                4,934ms  (9,998ms)
+Typing.CheckLHS.UnifyIndices   5,063ms           
+Typing.Generalize              8,981ms           
+Typing.OccursCheck             7,582ms           
+Typing.TypeSig                 5,526ms           
+Typing.With                    1,926ms           
+Typing.InstanceSearch            308ms           
+Serialization                 32,351ms (37,657ms)
+Serialization.Compress         2,392ms           
+Serialization.BinaryEncode     2,187ms           
+Serialization.Sort               500ms           
+Serialization.BuildInterface     225ms           
+DeadCode                      15,502ms           
+Coverage                      14,769ms           
+Parsing                        1,431ms (12,587ms)
+Parsing.OperatorsExpr          9,212ms           
+Parsing.OperatorsPattern       1,943ms           
+Positivity                    11,662ms           
+Scoping                        2,143ms (10,829ms)
+Scoping.InverseScopeLookup     8,685ms           
+Deserialization                6,215ms  (9,037ms)
+Deserialization.Compaction     2,821ms           
+Termination                      494ms  (2,144ms)
+Termination.RecCheck           1,497ms           
+Termination.Compare               95ms           
+Termination.Graph                 56ms           
+Highlighting                   1,322ms           
+Import                           357ms           
+Injectivity                      351ms           
+ProjectionLikeness                26ms           
+/home/julius/code/Chalmers/RA/agda-meta-sharing/std-lib/README/Data/List/Relation/Unary/All.agda:45,1-47
+Module cannot be imported since it has open interaction points
+(consider adding {-# OPTIONS --allow-unsolved-metas #-} to this
+module)
+when scope checking the declaration
+  import Data.List.Relation.Unary.All.Properties

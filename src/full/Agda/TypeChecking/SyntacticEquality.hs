@@ -25,13 +25,14 @@ import Control.Monad.Trans      ( lift )
 import Agda.Syntax.Common
 import Agda.Syntax.Internal
 
-import Agda.TypeChecking.Monad  ( ReduceM, MonadReduce(..), TCEnv(..), MonadTCEnv(..) )
+import Agda.TypeChecking.Monad  ( ReduceM, MonadReduce(..), TCEnv(..), MonadTCEnv(..), MonadDebug )
 import Agda.TypeChecking.Reduce
 import Agda.TypeChecking.Substitute
 
 import qualified Agda.Utils.Maybe.Strict as Strict
 import Agda.Utils.Monad (ifM)
 import Agda.Utils.Unsafe (unsafeComparePointers)
+import Agda.Syntax.Common.Pretty (Pretty)
 
 -- | Syntactic equality check for terms. If syntactic equality
 -- checking has fuel left, then 'checkSyntacticEquality' behaves as if
@@ -113,6 +114,11 @@ syntacticEqualityFuelRemains = do
     Strict.Nothing -> True
     Strict.Just n  -> n > 0
 
+inlineMetasIfEnabled :: (MonadReduce m, MonadDebug m, Normalise a, Pretty a) => a -> m a
+inlineMetasIfEnabled t = do
+  shouldInline <- envInlineMetasSynEq <$> askTC
+  if shouldInline then inlineMetas t else return t
+
 -- | Monad for checking syntactic equality
 type SynEqM = StateT Bool ReduceM
 
@@ -149,7 +155,7 @@ instance SynEq Bool where
 -- | Syntactic term equality ignores 'DontCare' stuff.
 instance SynEq Term where
   synEq v v' = if unsafeComparePointers v v' then return (v, v') else do
-    (v, v') <- lift $ {- inlineMetas =<< -} instantiate' (v, v')
+    (v, v') <- lift $ inlineMetasIfEnabled =<< instantiate' (v, v')
     case (v, v') of
       (Var   i vs, Var   i' vs') | i == i' -> Var i   <$$> synEq vs vs'
       (Con c i vs, Con c' i' vs') | c == c' -> Con c (bestConInfo i i') <$$> synEq vs vs'
@@ -181,7 +187,7 @@ instance SynEq PlusLevel where
 
 instance SynEq Sort where
   synEq s s' = if unsafeComparePointers s s' then return (s, s') else do
-    (s, s') <- lift $ {- inlineMetas =<< -} instantiate' (s, s')
+    (s, s') <- lift $ inlineMetasIfEnabled =<< instantiate' (s, s')
     case (s, s') of
       (Univ u l, Univ u' l') | u == u' -> Univ u <$$> synEq l l'
       (PiSort a b c, PiSort a' b' c') -> piSort <$$> synEq a a' <**> synEq' b b' <**> synEq' c c'

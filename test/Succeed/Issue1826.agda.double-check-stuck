@@ -57,4 +57,4 @@ module _ (eq : ∀ {a p} → R a p) where
     ∀ {a} {A : Set a} {x : A} {q : x ≡ x} {r : x ≡ x} →
     [subst≡]≡[trans≡trans] {p = refl x} {q = q} {r = r} ≡
     [subst≡]≡[trans≡trans] {p = refl x} {q = q} {r = r}
-  foo = elim-refl ? ?
+  foo = elim-refl {!!} {!!}

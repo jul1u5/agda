@@ -249,6 +249,8 @@ instance Instantiate Term where
   instantiate' t = return t
 
 -- TODO: can we just use @appDefE''@ here instead of dealing with substitutions?
+-- TODO: not inline when the meta is not termination checked
+-- We decided to inline when the meta might not have been termination checked, we hope that's not going to lead to any nontermination.
 inlineMetaFun :: HasConstInfo m => QName -> [Elim' Term] -> m Term
 inlineMetaFun f es = do
   defn <- theDef <$> getConstInfo f

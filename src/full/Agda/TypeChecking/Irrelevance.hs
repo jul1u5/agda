@@ -234,7 +234,7 @@ instance UsableModality Term where
           defn <- theDef <$> getConstInfo f
           return (defn ^. funMeta) `and2M` do
             u <- inlineMetaFun f vs
-            usableMod mod $ u
+            usableMod mod u
     Con c o vs -> do
       cmod <- modalityOfConst (conName c)
       let ok = cmod `moreUsableModality` mod
